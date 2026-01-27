@@ -14,14 +14,19 @@
       justify-content: center;
       background: #ffffff;
       color: #000000;
-      font-family: Georgia, serif;
       text-align: center;
-      padding: 24px;
+      padding: 32px;
+
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "Helvetica Neue", Arial, sans-serif;
     }
 
     .message {
-      font-size: 28px;
-      line-height: 1.6;
+      font-size: clamp(38px, 7vw, 58px);
+      line-height: 1.35;
+      letter-spacing: 0.4px;
+      font-weight: 600;
+      max-width: 640px;
     }
   </style>
 </head>
@@ -40,8 +45,8 @@
     "Final call for bravery / love."
   ];
 
-  const random = messages[Math.floor(Math.random() * messages.length)];
-  document.getElementById("message").innerText = random;
+  document.getElementById("message").innerText =
+    messages[Math.floor(Math.random() * messages.length)];
 </script>
 
 </body>
