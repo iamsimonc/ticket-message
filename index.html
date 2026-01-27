@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Message</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      color: #000000;
+      font-family: Georgia, serif;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .message {
+      font-size: 28px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="message" id="message"></div>
+
+<script>
+  const messages = [
+    "Trust your pace.",
+    "Small steps still count.",
+    "Every journey begins with one brave step.",
+    "Not just a trip — a life in progress.",
+    "One ticket. Endless possibilities.",
+    "Adventure is calling.",
+    "Final call for bravery / love."
+  ];
+
+  const random = messages[Math.floor(Math.random() * messages.length)];
+  document.getElementById("message").innerText = random;
+</script>
+
+</body>
+</html>
