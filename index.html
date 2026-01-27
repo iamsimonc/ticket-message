@@ -1,58 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Message</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>Spoken Word｜Feet on the Ground, Eyes Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     body {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #ffffff;
-      color: #000000;
-      text-align: center;
-      padding: 32px;
-
+      background: #0f1115;
+      color: #eaeaea;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                   "Helvetica Neue", Arial, sans-serif;
+                   Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
     }
 
-    .message {
-      font-size: clamp(36px, 6.5vw, 54px);
-      line-height: 1.45;
-      letter-spacing: 0.6px;
-      font-weight: 500;
-      max-width: 680px;
-
-      opacity: 0;
-      animation: fadeIn 0.6s ease-out forwards;
+    .container {
+      max-width: 720px;
+      padding: 48px 24px 80px;
     }
 
-    @keyframes fadeIn {
-      to { opacity: 1; }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 40px;
+      line-height: 1.3;
+      color: #ffffff;
+    }
+
+    .line {
+      font-size: 1.25rem;
+      line-height: 1.9;
+      margin-bottom: 22px;
+      color: #dcdcdc;
+    }
+
+    .spacer {
+      height: 14px;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.9rem;
+      color: #888;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .line {
+        font-size: 1.15rem;
+      }
     }
   </style>
 </head>
+
 <body>
+  <div class="container">
+    <h1>Spoken Word｜Feet on the Ground, Eyes Up</h1>
 
-<div class="message" id="message"></div>
+    <div class="line">Keep your feet on the ground,</div>
+    <div class="line">but don’t forget to look up.</div>
 
-<script>
-const messages = [
-  "Trust your pace.",
-  "Small steps still count.",
-  "Not just a trip — a life in<br>progress.",
-  "Every journey begins with<br>one brave step.",
-  "One ticket. Endless possibilities."
-];
+    <div class="spacer"></div>
 
-document.getElementById("message").innerHTML =
-  messages[Math.floor(Math.random() * messages.length)];
-</script>
+    <div class="line">You walk this road,</div>
+    <div class="line">but you are not unseen.</div>
 
+    <div class="spacer"></div>
+
+    <div class="line">Every step on earth</div>
+    <div class="line">echoes somewhere higher.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Trust your pace —</div>
+    <div class="line">Someone walks with you.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You’re not just moving forward,</div>
+    <div class="line">you’re being guided.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Small steps still count,</div>
+    <div class="line">heaven notices the quiet ones.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You don’t need to escape this world</div>
+    <div class="line">to be held beyond it.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Even here,</div>
+    <div class="line">light finds you.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You stand on solid ground,</div>
+    <div class="line">but hope comes from above.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">This path feels ordinary —</div>
+    <div class="line">it’s not walked alone.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You carry questions,</div>
+    <div class="line">and still you are carried.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">The sky isn’t far,</div>
+    <div class="line">it’s closer than you think.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Every honest step</div>
+    <div class="line">leans toward grace.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You don’t have to climb to be reached.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Not just a journey on earth —</div>
+    <div class="line">a calling unfolding.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">When you pause,</div>
+    <div class="line">the light does not leave.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You’re learning to walk,</div>
+    <div class="line">not proving your worth.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Faith isn’t flying away —</div>
+    <div class="line">it’s standing firm and looking up.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">One brave step,</div>
+    <div class="line">met by unseen hands.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You’re not lost —</div>
+    <div class="line">you’re being led.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">The ground feels heavy,</div>
+    <div class="line">but the promise is light.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You’re allowed to struggle</div>
+    <div class="line">and still be chosen.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Heaven doesn’t rush you.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Even here,</div>
+    <div class="line">mercy is working quietly.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You don’t walk toward perfection,</div>
+    <div class="line">you walk toward love.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Every morning</div>
+    <div class="line">is a gentle call.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Your story is earthly,</div>
+    <div class="line">but it leans eternal.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You are becoming —</div>
+    <div class="line">watched with kindness.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">One ticket,</div>
+    <div class="line">more than this world can offer.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">This life is real,</div>
+    <div class="line">and it points higher.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You’re not asked to escape,</div>
+    <div class="line">only to trust.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">The road teaches your feet,</div>
+    <div class="line">the sky teaches your heart.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You are seen</div>
+    <div class="line">even when unnoticed.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Each step whispers,</div>
+    <div class="line">“You are not alone.”</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Courage grows</div>
+    <div class="line">when you look up.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You don’t have to understand</div>
+    <div class="line">to be held.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">The call is gentle,</div>
+    <div class="line">not forced.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You walk this world</div>
+    <div class="line">with heaven in view.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Even now,</div>
+    <div class="line">something good is guiding you.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Keep going —</div>
+    <div class="line">grace keeps pace.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You’re allowed to live fully here</div>
+    <div class="line">and hope beyond here.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">The ground may shake,</div>
+    <div class="line">but the promise stands.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Every step forward</div>
+    <div class="line">leans into light.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You’re not climbing to earn love.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">This is not just survival —</div>
+    <div class="line">it’s becoming.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Heaven doesn’t pull you away,</div>
+    <div class="line">it lifts you up.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">You walk with questions,</div>
+    <div class="line">and still you’re called.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">The journey is human,</div>
+    <div class="line">the hope is divine.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Stay grounded.</div>
+    <div class="line">Stay open.</div>
+
+    <div class="spacer"></div>
+
+    <div class="line">Final call —</div>
+    <div class="line">walk boldly, look upward.</div>
+
+    <footer>
+      © Spoken Word
+    </footer>
+  </div>
 </body>
 </html>
