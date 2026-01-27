@@ -25,10 +25,10 @@
     }
 
     h1 {
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 500;
-      letter-spacing: 0.08em;
-      color: #888;
+      letter-spacing: 0.12em;
+      color: #777;
       margin-bottom: 32px;
       text-transform: uppercase;
     }
@@ -37,6 +37,24 @@
       font-size: 1.8rem;
       line-height: 1.7;
       font-weight: 500;
+
+      /* 呼吸動畫 */
+      animation: breathe 7s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0% {
+        transform: scale(1);
+        opacity: 0.95;
+      }
+      50% {
+        transform: scale(1.03);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 0.95;
+      }
     }
 
     @media (max-width: 600px) {
@@ -108,7 +126,8 @@
     ];
 
     const randomIndex = Math.floor(Math.random() * messages.length);
-    document.getElementById("message").textContent = messages[randomIndex];
+    document.getElementById("message").textContent =
+      messages[randomIndex];
   </script>
 </body>
 </html>
