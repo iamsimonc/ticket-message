@@ -42,18 +42,16 @@
 <div class="message" id="message"></div>
 
 <script>
-  const messages = [
-    "Trust your pace.",
-    "Small steps still count.",
-    "Every journey begins with one brave step.",
-    "Not just a trip — a life in progress.",
-    "One ticket. Endless possibilities.",
-    "Adventure is calling.",
-    "Final call for bravery / love."
-  ];
+const messages = [
+  "Trust your pace.",
+  "Small steps still count.",
+  "Not just a trip — a life in<br>progress.",
+  "Every journey begins with<br>one brave step.",
+  "One ticket. Endless possibilities."
+];
 
-  document.getElementById("message").innerText =
-    messages[Math.floor(Math.random() * messages.length)];
+document.getElementById("message").innerHTML =
+  messages[Math.floor(Math.random() * messages.length)];
 </script>
 
 </body>
