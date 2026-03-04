@@ -3,55 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>心靈金句 App</title>
+    <title>Daily Verse - Dark Mode</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: white; max-width: 500px; width: 100%; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; }
-        .words { font-size: 1.4em; color: #4a5568; font-style: italic; margin-bottom: 30px; line-height: 1.4; border-bottom: 1px solid #edf2f7; padding-bottom: 20px; }
-        .bible-section { color: #2d3748; }
-        .verse-ch { font-weight: bold; font-size: 1.2em; margin-bottom: 10px; }
-        .verse-en { font-size: 1em; color: #718096; margin-bottom: 15px; }
-        .ref { font-size: 0.85em; color: #a0aec0; letter-spacing: 1px; text-transform: uppercase; }
-        button { margin-top: 30px; padding: 12px 30px; border: none; background: #667eea; color: white; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #5a67d8; transform: translateY(-2px); }
+        /* 深色模式基礎設定 */
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* 卡片容器 */
+        .card {
+            background: #1E1E1E;
+            width: 90%;
+            max-width: 500px;
+            padding: 50px 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden; /* 必須，為了裁切漣漪效果 */
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .card:active {
+            transform: scale(0.98); /* 點擊時微縮小感 */
+        }
+
+        /* 漣漪動畫 CSS */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* 排版樣式 */
+        .words {
+            font-size: 1.4em;
+            font-style: italic;
+            color: #BB86FC; /* 柔和紫色強調小語 */
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .verse-en {
+            font-size: 1.1em;
+            color: #B0B0B0;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .ref-en {
+            font-size: 0.9em;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+
+        .verse-ch {
+            font-size: 1.3em;
+            font-weight: 500;
+            color: #FFFFFF;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .ref-ch {
+            font-size: 0.95em;
+            color: #757575;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            left: 0;
+            font-size: 0.7em;
+            color: #333;
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div id="words" class="words">載入中...</div>
-    <div class="bible-section">
-        <div id="verse-ch" class="verse-ch"></div>
+<div class="card" id="card" onclick="handleCardClick(event)">
+    <div id="words" class="words">Loading...</div>
+    
+    <div class="section">
         <div id="verse-en" class="verse-en"></div>
-        <div id="ref" class="ref"></div>
+        <div id="ref-en" class="ref-en"></div>
     </div>
-    <button onclick="displayRandom()">下一句</button>
+
+    <div class="section">
+        <div id="verse-ch" class="verse-ch"></div>
+        <div id="ref-ch" class="ref-ch"></div>
+    </div>
+
+    <div class="hint">TAP ANYWHERE</div>
 </div>
 
 <script>
     let dataList = [];
 
-// 將原本的 fetch('data.txt') 改成這樣：
-async function init() {
-    try {
-        // 加上 ?v= + 時間，讓瀏覽器以為這是新檔案，避開快取
-        const resp = await fetch('data.txt?v=' + new Date().getTime());
-        dataList = await resp.json();
-        displayRandom();
-    } catch (e) {
-        document.getElementById('words').innerText = "讀取失敗：" + e;
+    async function init() {
+        try {
+            // 抓取檔案，加上時間戳防止 GitHub 快取
+            const resp = await fetch('data.txt?t=' + Date.now());
+            dataList = await resp.json();
+            displayRandom();
+        } catch (e) {
+            document.getElementById('words').innerText = "Load Error";
+            console.error(e);
+        }
     }
-}
 
-function displayRandom() {
+    function displayRandom() {
         if (!dataList.length) return;
         const item = dataList[Math.floor(Math.random() * dataList.length)];
         
-        // 這裡的名稱必須和上面 JSON 裡的一模一樣
         document.getElementById('words').innerText = item.words;
-        document.getElementById('verse-ch').innerText = item.ch_verse;
         document.getElementById('verse-en').innerText = item.en_verse;
-        document.getElementById('ref').innerText = `${item.ch_ref} | ${item.en_ref}`;
+        document.getElementById('ref-en').innerText = item.en_ref;
+        document.getElementById('verse-ch').innerText = item.ch_verse;
+        document.getElementById('ref-ch').innerText = item.ch_ref;
+    }
+
+    // 處理點擊卡片：產生漣漪並切換
+    function handleCardClick(event) {
+        createRipple(event);
+        displayRandom();
+    }
+
+    // 建立漣漪效果
+    function createRipple(event) {
+        const card = document.getElementById('card');
+        const ripple = document.createElement('span');
+        const rect = card.getBoundingClientRect();
+        
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.classList.add('ripple');
+        
+        card.appendChild(ripple);
+        
+        // 動畫結束後移除節點
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
     }
 
     init();
