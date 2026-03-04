@@ -1,82 +1,27 @@
 [
-  {
-    "id": 1,
-    "words": "Keep your feet on the ground, but don’t forget to look up.",
-    "en_verse": "I lift up my eyes to the mountains—where does my help come from?",
-    "en_ref": "Psalm 121:1",
-    "ch_verse": "我向高山舉目；我的幫助從何而來？",
-    "ch_ref": "詩篇 121:1"
-  },
-  {
-    "id": 2,
-    "words": "You walk this road, but you are not unseen.",
-    "en_verse": "You have searched me, Lord, and you know me.",
-    "en_ref": "Psalm 139:1",
-    "ch_verse": "耶和華啊，你已經鑒察我，認識我。",
-    "ch_ref": "詩篇 139:1"
-  },
-  {
-    "id": 3,
-    "words": "Every step on earth echoes somewhere higher.",
-    "en_verse": "In their hearts humans plan their course, but the Lord establishes their steps.",
-    "en_ref": "Proverbs 16:9",
-    "ch_verse": "人心籌算自己的道路，唯耶和華指引他的腳步。",
-    "ch_ref": "箴言 16:9"
-  },
-  {
-    "id": 4,
-    "words": "Trust your pace — someone walks with you.",
-    "en_verse": "So do not fear, for I am with you; do not be dismayed, for I am your God.",
-    "en_ref": "Isaiah 41:10",
-    "ch_verse": "你不要害怕，因為我與你同在；不要驚惶，因為我是你的神。",
-    "ch_ref": "以賽亞書 41:10"
-  },
-  {
-    "id": 5,
-    "words": "You’re not just moving forward, you’re being guided.",
-    "en_verse": "I will instruct you and teach you in the way you should go.",
-    "en_ref": "Psalm 32:8",
-    "ch_verse": "我要教導你，指示你當行的路；我要定睛在你身上勸戒你。",
-    "ch_ref": "詩篇 32:8"
-  },
-  {
-    "id": 6,
-    "words": "Small steps still count — heaven notices the quiet ones.",
-    "en_verse": "And if anyone gives even a cup of cold water to one of these little ones...",
-    "en_ref": "Matthew 10:42",
-    "ch_verse": "無論何人，因為門徒的名，只把一杯涼水給這小子裡的一個喝...",
-    "ch_ref": "馬太福音 10:42"
-  },
-  {
-    "id": 7,
-    "words": "You don’t need to escape this world to be held beyond it.",
-    "en_verse": "My prayer is not that you take them out of the world but that you protect them.",
-    "en_ref": "John 17:15",
-    "ch_verse": "我不求你叫他們離開世界，只求你保守他們脫離那惡者。",
-    "ch_ref": "約翰福音 17:15"
-  },
-  {
-    "id": 8,
-    "words": "Even here, light finds you.",
-    "en_verse": "The light shines in the darkness, and the darkness has not overcome it.",
-    "en_ref": "John 1:5",
-    "ch_verse": "光照在黑暗裡，黑暗卻不接受光。",
-    "ch_ref": "約翰福音 1:5"
-  },
-  {
-    "id": 9,
-    "words": "You stand on solid ground, but hope comes from above.",
-    "en_verse": "Truly he is my rock and my salvation; he is my fortress, I will never be shaken.",
-    "en_ref": "Psalm 62:6",
-    "ch_verse": "唯獨他是我的磐石，我的拯救；他是我的高臺，我必不很動搖。",
-    "ch_ref": "詩篇 62:6"
-  },
-  {
-    "id": 10,
-    "words": "This path feels ordinary — it’s not walked alone.",
-    "en_verse": "And surely I am with you always, to the very end of the age.",
-    "en_ref": "Matthew 28:20",
-    "ch_verse": "我就常與你們同在，直到世界的末了。",
-    "ch_ref": "馬太福音 28:20"
-  }
+  {"id":1,"words":"Keep your feet on the ground, but don’t forget to look up.","en_verse":"I lift up my eyes to the mountains—where does my help come from?","en_ref":"Psalm 121:1","ch_verse":"我向高山舉目；我的幫助從何而來？","ch_ref":"詩篇 121:1"},
+  {"id":2,"words":"You walk this road, but you are not unseen.","en_verse":"You have searched me, Lord, and you know me.","en_ref":"Psalm 139:1","ch_verse":"耶和華啊，你已經鑒察我，認識我。","ch_ref":"詩篇 139:1"},
+  {"id":3,"words":"Every step on earth echoes somewhere higher.","en_verse":"In their hearts humans plan their course, but the Lord establishes their steps.","en_ref":"Proverbs 16:9","ch_verse":"人心籌算自己的道路，唯耶和華指引他的腳步。","ch_ref":"箴言 16:9"},
+  {"id":4,"words":"Trust your pace — someone walks with you.","en_verse":"So do not fear, for I am with you; do not be dismayed, for I am your God.","en_ref":"Isaiah 41:10","ch_verse":"你不要害怕，因為我與你同在；不要驚惶，因為我是你的神。","ch_ref":"以賽亞書 41:10"},
+  {"id":5,"words":"You’re not just moving forward, you’re being guided.","en_verse":"I will instruct you and teach you in the way you should go.","en_ref":"Psalm 32:8","ch_verse":"我要教導你，指示你當行的路；我要定睛在你身上勸戒你。","ch_ref":"詩篇 32:8"},
+  {"id":6,"words":"Small steps still count — heaven notices the quiet ones.","en_verse":"And if anyone gives even a cup of cold water to one of these little ones...","en_ref":"Matthew 10:42","ch_verse":"無論何人，因為門徒的名，只把一杯涼水給這小子裡的一個喝...","ch_ref":"馬太福音 10:42"},
+  {"id":7,"words":"You don’t need to escape this world to be held beyond it.","en_verse":"My prayer is not that you take them out of the world but that you protect them.","en_ref":"John 17:15","ch_verse":"我不求你叫他們離開世界，只求你保守他們脫離那惡者。","ch_ref":"約翰福音 17:15"},
+  {"id":8,"words":"Even here, light finds you.","en_verse":"The light shines in the darkness, and the darkness has not overcome it.","en_ref":"John 1:5","ch_verse":"光照在黑暗裡，黑暗卻不接受光。","ch_ref":"約翰福音 1:5"},
+  {"id":9,"words":"You stand on solid ground, but hope comes from above.","en_verse":"Truly he is my rock and my salvation; he is my fortress, I will never be shaken.","en_ref":"Psalm 62:6","ch_verse":"唯獨他是我的磐石，我的拯救；他是我的高臺，我必不很動搖。","ch_ref":"詩篇 62:6"},
+  {"id":10,"words":"This path feels ordinary — it’s not walked alone.","en_verse":"And surely I am with you always, to the very end of the age.","en_ref":"Matthew 28:20","ch_verse":"我就常與你們同在，直到世界的末了。","ch_ref":"馬太福音 28:20"},
+  {"id":11,"words":"You carry questions, and still you are carried.","en_verse":"I will sustain you and I will rescue you.","en_ref":"Isaiah 46:4","ch_verse":"直到你們年老，我仍這樣；直到你們髮白，我仍懷搋。","ch_ref":"以賽亞書 46:4"},
+  {"id":12,"words":"The sky isn’t far — it’s closer than you think.","en_verse":"God did this so that they would seek him... though he is not far from any one of us.","en_ref":"Acts 17:27","ch_verse":"要叫他們尋求神...其實他離我們各人不遠。","ch_ref":"使徒行傳 17:27"},
+  {"id":13,"words":"Every honest step leans toward grace.","en_verse":"But he said to me, \"My grace is sufficient for you.\"","en_ref":"2 Corinthians 12:9","ch_verse":"我的恩典夠你用的，因為我的能力是在人的軟弱上顯得完全。","ch_ref":"哥林多後書 12:9"},
+  {"id":14,"words":"You don’t have to climb to be reached.","en_verse":"\"The word is near you; it is in your mouth and in your heart.\"","en_ref":"Romans 10:8","ch_verse":"這道離你不遠，正在你口裡，在你心裡。","ch_ref":"羅馬書 10:8"},
+  {"id":15,"words":"Not just a journey on earth — a calling unfolding.","en_verse":"He who began a good work in you will carry it on to completion.","en_ref":"Philippians 1:6","ch_verse":"那在你們心裡動了善工的，必成全這工。","ch_ref":"腓立比書 1:6"},
+  {"id":16,"words":"When you pause, the light does not leave.","en_verse":"He says, \"Be still, and know that I am God.\"","en_ref":"Psalm 46:10","ch_verse":"你們要休息，要知道我是神！","ch_ref":"詩篇 46:10"},
+  {"id":17,"words":"You’re learning to walk, not proving your worth.","en_verse":"For it is by grace you have been saved... not by works.","en_ref":"Ephesians 2:8-9","ch_verse":"你們得救是本乎恩，也因著信；這並不是出於自己。","ch_ref":"以弗所書 2:8-9"},
+  {"id":18,"words":"Faith isn’t flying away — it’s standing firm and looking up.","en_verse":"Be on your guard; stand firm in the faith.","en_ref":"1 Corinthians 16:13","ch_verse":"你們務要警醒，在真道上站立得穩。","ch_ref":"哥林多前書 16:13"},
+  {"id":19,"words":"One brave step, met by unseen hands.","en_verse":"Though he may stumble, he will not fall, for the Lord upholds him with his hand.","en_ref":"Psalm 37:24","ch_verse":"他雖失腳，也不至全身跌倒，因為耶和華用手攙扶他。","ch_ref":"詩篇 37:24"},
+  {"id":20,"words":"You’re not lost — you’re being led.","en_verse":"He guides me along the right paths for his name’s sake.","en_ref":"Psalm 23:3","ch_verse":"他使我的靈魂蘇醒，為自己的名引導我走義路。","ch_ref":"詩篇 23:3"},
+  {"id":21,"words":"The ground feels heavy, but the promise is light.","en_verse":"Come to me, all you who are weary and burdened, and I will give you rest.","en_ref":"Matthew 11:28","ch_verse":"凡勞苦擔重擔的人可以到我這裡來，我就使你們得安息。","ch_ref":"馬太福音 11:28"},
+  {"id":22,"words":"You’re allowed to struggle and still be chosen.","en_verse":"But God chose the foolish things of the world to shame the wise.","en_ref":"1 Corinthians 1:27","ch_verse":"神卻揀選了世上愚拙的，叫有智慧的羞愧。","ch_ref":"哥林多前書 1:27"},
+  {"id":23,"words":"Heaven doesn’t rush you.","en_verse":"Instead he is patient with you, not wanting anyone to perish.","en_ref":"2 Peter 3:9","ch_verse":"主所應許的尚未成就...乃是寬容你們。","ch_ref":"彼得後書 3:9"},
+  {"id":24,"words":"Even here, mercy is working quietly.","en_verse":"Because of the Lord’s great love we are not consumed.","en_ref":"Lamentations 3:22","ch_verse":"我們不致消滅，是出於耶和華諸般的慈愛。","ch_ref":"耶利米哀歌 3:22"},
+  {"id":25,"words":"You don’t walk toward perfection, you walk toward love.","ch_verse":"凡你們所做的都要憑愛心而做。","ch_ref":"哥林多前書 16:14","en_verse":"Do everything in love.","en_ref":"1 Corinthians 16:14"}
 ]
