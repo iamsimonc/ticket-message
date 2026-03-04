@@ -31,15 +31,17 @@
 <script>
     let dataList = [];
 
-    async function init() {
-        try {
-            const resp = await fetch('data.txt');
-            dataList = await resp.json();
-            displayRandom();
-        } catch (e) {
-            document.getElementById('words').innerText = "讀取失敗，請確認 data.txt 存在且格式正確。";
-        }
+// 將原本的 fetch('data.txt') 改成這樣：
+async function init() {
+    try {
+        // 加上 ?v= + 時間，讓瀏覽器以為這是新檔案，避開快取
+        const resp = await fetch('data.txt?v=' + new Date().getTime());
+        dataList = await resp.json();
+        displayRandom();
+    } catch (e) {
+        document.getElementById('words').innerText = "讀取失敗：" + e;
     }
+}
 
 function displayRandom() {
         if (!dataList.length) return;
