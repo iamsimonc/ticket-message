@@ -2,113 +2,121 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Verse - Dark Mode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Daily Verse - Mobile Optimized</title>
     <style>
-        /* 深色模式基礎設定 */
+        /* 基礎深色設定 */
         body {
-            background-color: #121212;
-            color: #E0E0E0;
-            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* 移除行動版點擊藍色框 */
         }
 
-        /* 卡片容器 */
+        /* 針對 9:16 優化的卡片 */
         .card {
-            background: #1E1E1E;
-            width: 90%;
-            max-width: 500px;
-            padding: 50px 40px;
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            text-align: center;
+            background: linear-gradient(145deg, #1e1e1e, #161616);
+            width: 100%;
+            max-width: 360px; /* 手機寬度上限 */
+            min-height: 65vh; /* 確保在長手機上有足夠高度 */
+            padding: 45px 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 內容垂直居中 */
             position: relative;
-            overflow: hidden; /* 必須，為了裁切漣漪效果 */
-            cursor: pointer;
-            transition: transform 0.2s ease;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .card:active {
-            transform: scale(0.98); /* 點擊時微縮小感 */
-        }
-
-        /* 漣漪動畫 CSS */
+        /* 漣漪效果樣式 */
         .ripple {
             position: absolute;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             transform: scale(0);
-            animation: ripple-animation 0.6s linear;
+            animation: ripple-animation 0.7s ease-out;
             pointer-events: none;
         }
 
         @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
+            to { transform: scale(4); opacity: 0; }
         }
 
-        /* 排版樣式 */
+        /* 排版細節優化 */
         .words {
-            font-size: 1.4em;
-            font-style: italic;
-            color: #BB86FC; /* 柔和紫色強調小語 */
-            margin-bottom: 40px;
+            font-size: 1.35rem;
             line-height: 1.5;
+            color: #bb86fc;
+            font-style: italic;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .divider {
+            width: 40px;
+            height: 2px;
+            background: #333;
+            margin: 0 auto 2rem;
         }
 
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 1.8rem;
         }
 
         .verse-en {
-            font-size: 1.1em;
-            color: #B0B0B0;
+            font-size: 0.95rem;
+            color: #a0a0a0;
             line-height: 1.6;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
         }
 
         .ref-en {
-            font-size: 0.9em;
-            color: #757575;
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 0.05rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 25px;
         }
 
         .verse-ch {
-            font-size: 1.3em;
-            font-weight: 500;
-            color: #FFFFFF;
-            line-height: 1.6;
-            margin-bottom: 8px;
+            font-size: 1.2rem;
+            color: #ffffff;
+            line-height: 1.7;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.02rem;
         }
 
         .ref-ch {
-            font-size: 0.95em;
-            color: #757575;
+            font-size: 0.85rem;
+            color: #666;
         }
 
-        .hint {
+        .footer-hint {
             position: absolute;
-            bottom: 15px;
-            width: 100%;
+            bottom: 25px;
             left: 0;
-            font-size: 0.7em;
-            color: #333;
-            letter-spacing: 2px;
+            right: 0;
+            font-size: 0.65rem;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
         }
     </style>
 </head>
-<body>
+<body onclick="handleGlobalClick(event)">
 
-<div class="card" id="card" onclick="handleCardClick(event)">
-    <div id="words" class="words">Loading...</div>
+<div class="card" id="card">
+    <div id="words" class="words">...</div>
+    <div class="divider"></div>
     
     <div class="section">
         <div id="verse-en" class="verse-en"></div>
@@ -120,7 +128,7 @@
         <div id="ref-ch" class="ref-ch"></div>
     </div>
 
-    <div class="hint">TAP ANYWHERE</div>
+    <div class="footer-hint">Tap to Refresh</div>
 </div>
 
 <script>
@@ -128,13 +136,11 @@
 
     async function init() {
         try {
-            // 抓取檔案，加上時間戳防止 GitHub 快取
             const resp = await fetch('data.txt?t=' + Date.now());
             dataList = await resp.json();
             displayRandom();
         } catch (e) {
-            document.getElementById('words').innerText = "Load Error";
-            console.error(e);
+            document.getElementById('words').innerText = "Loading data...";
         }
     }
 
@@ -149,13 +155,11 @@
         document.getElementById('ref-ch').innerText = item.ch_ref;
     }
 
-    // 處理點擊卡片：產生漣漪並切換
-    function handleCardClick(event) {
+    function handleGlobalClick(event) {
         createRipple(event);
         displayRandom();
     }
 
-    // 建立漣漪效果
     function createRipple(event) {
         const card = document.getElementById('card');
         const ripple = document.createElement('span');
@@ -171,11 +175,7 @@
         ripple.classList.add('ripple');
         
         card.appendChild(ripple);
-        
-        // 動畫結束後移除節點
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
+        setTimeout(() => ripple.remove(), 700);
     }
 
     init();
