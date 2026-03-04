@@ -1,133 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <title>Feet on the Ground, Eyes Up</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: #0f1115;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                   Roboto, Helvetica, Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-
-    .container {
-      padding: 24px;
-      max-width: 680px;
-    }
-
-    h1 {
-      font-size: 0.9rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      color: #777;
-      margin-bottom: 32px;
-      text-transform: uppercase;
-    }
-
-    .message {
-      font-size: 1.8rem;
-      line-height: 1.7;
-      font-weight: 500;
-
-      /* 呼吸動畫 */
-      animation: breathe 7s ease-in-out infinite;
-    }
-
-    @keyframes breathe {
-      0% {
-        transform: scale(1);
-        opacity: 0.95;
-      }
-      50% {
-        transform: scale(1.03);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 0.95;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .message {
-        font-size: 1.5rem;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日經文 App</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; text-align: center; }
+        .quote { font-style: italic; color: #555; margin-bottom: 10px; font-size: 1.1em; }
+        .scripture { font-weight: bold; color: #333; font-size: 1.2em; margin-bottom: 5px; }
+        .ref { color: #888; font-size: 0.9em; }
+        button { margin-top: 20px; padding: 10px 20px; border: none; background: #5a67d8; color: white; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #434190; }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-  <h1></h1>
-    <div class="message" id="message"></div>
-  </div>
 
-  <script>
-    const messages = [
-      "Keep your feet on the ground, but don’t forget to look up.",
-      "You walk this road, but you are not unseen.",
-      "Every step on earth echoes somewhere higher.",
-      "Trust your pace — someone walks with you.",
-      "You’re not just moving forward, you’re being guided.",
-      "Small steps still count — heaven notices the quiet ones.",
-      "You don’t need to escape this world to be held beyond it.",
-      "Even here, light finds you.",
-      "You stand on solid ground, but hope comes from above.",
-      "This path feels ordinary — it’s not walked alone.",
-      "You carry questions, and still you are carried.",
-      "The sky isn’t far — it’s closer than you think.",
-      "Every honest step leans toward grace.",
-      "You don’t have to climb to be reached.",
-      "Not just a journey on earth — a calling unfolding.",
-      "When you pause, the light does not leave.",
-      "You’re learning to walk, not proving your worth.",
-      "Faith isn’t flying away — it’s standing firm and looking up.",
-      "One brave step, met by unseen hands.",
-      "You’re not lost — you’re being led.",
-      "The ground feels heavy, but the promise is light.",
-      "You’re allowed to struggle and still be chosen.",
-      "Heaven doesn’t rush you.",
-      "Even here, mercy is working quietly.",
-      "You don’t walk toward perfection, you walk toward love.",
-      "Every morning is a gentle call.",
-      "Your story is earthly, but it leans eternal.",
-      "You are becoming — watched with kindness.",
-      "One ticket, more than this world can offer.",
-      "This life is real, and it points higher.",
-      "You’re not asked to escape, only to trust.",
-      "The road teaches your feet, the sky teaches your heart.",
-      "You are seen even when unnoticed.",
-      "Each step whispers, ‘You are not alone.’",
-      "Courage grows when you look up.",
-      "You don’t have to understand to be held.",
-      "The call is gentle, not forced.",
-      "You walk this world with heaven in view.",
-      "Even now, something good is guiding you.",
-      "Keep going — grace keeps pace.",
-      "You’re allowed to live fully here and hope beyond here.",
-      "The ground may shake, but the promise stands.",
-      "Every step forward leans into light.",
-      "You’re not climbing to earn love.",
-      "This is not just survival — it’s becoming.",
-      "Heaven doesn’t pull you away, it lifts you up.",
-      "You walk with questions, and still you’re called.",
-      "The journey is human, the hope is divine.",
-      "Stay grounded. Stay open.",
-      "Final call — walk boldly, look upward."
-    ];
+<div class="card">
+    <div id="quote" class="quote">載入中...</div>
+    <div id="scripture" class="scripture"></div>
+    <div id="ref" class="ref"></div>
+    <button onclick="getRandomVerse()">下一句</button>
+</div>
 
-    const randomIndex = Math.floor(Math.random() * messages.length);
-    document.getElementById("message").textContent =
-      messages[randomIndex];
-  </script>
+<script>
+    let bibleData = [];
+
+    // 1. 從 txt 檔抓取資料
+    async function loadData() {
+        try {
+            const response = await fetch('data.txt');
+            bibleData = await response.json();
+            getRandomVerse(); // 初始載入第一句
+        } catch (error) {
+            document.getElementById('quote').innerText = "讀取失敗，請確認 data.txt 是否在同一資料夾且編碼為 UTF-8";
+            console.error(error);
+        }
+    }
+
+    // 2. 隨機抽選顯示
+    function getRandomVerse() {
+        if (bibleData.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * bibleData.length);
+        const verse = bibleData[randomIndex];
+        
+        document.getElementById('quote').innerText = verse.en;
+        document.getElementById('scripture').innerText = verse.ch;
+        document.getElementById('ref').innerText = verse.ref;
+    }
+
+    // 啟動
+    loadData();
+</script>
+
 </body>
 </html>
