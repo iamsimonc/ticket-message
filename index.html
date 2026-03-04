@@ -41,10 +41,11 @@
         }
     }
 
-    function displayRandom() {
+function displayRandom() {
         if (!dataList.length) return;
         const item = dataList[Math.floor(Math.random() * dataList.length)];
         
+        // 這裡的名稱必須和上面 JSON 裡的一模一樣
         document.getElementById('words').innerText = item.words;
         document.getElementById('verse-ch').innerText = item.ch_verse;
         document.getElementById('verse-en').innerText = item.en_verse;
