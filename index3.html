@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Daily Verse</title>
+    <title>Daily Verse - Slow & Large Ripple</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -45,18 +45,23 @@
             z-index: 1; /* 確保卡片在啟動頁面下方 */
         }
 
-        /* 漣漪效果樣式（用於卡片） */
+        /* === 漣漪效果樣式（用於卡片）- 已修改 === */
         .ripple {
             position: absolute;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             transform: scale(0);
-            animation: ripple-animation 0.7s ease-out;
+            /* 修改：動畫持續時間從 0.7s 變為 1.4s (慢一倍) */
+            animation: ripple-animation 1.4s ease-out;
             pointer-events: none;
         }
 
         @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
+            to {
+                /* 修改：最終放大倍數從 scale(4) 變為 scale(8) (大一倍) */
+                transform: scale(8);
+                opacity: 0;
+            }
         }
 
         /* === 啟動頁面（遮罩）樣式 === */
@@ -259,7 +264,7 @@
         displayRandom();
     }
 
-    // 建立漣漪效果
+    // 建立漣漪效果 - 已修改
     function createRipple(event) {
         const card = document.getElementById('card');
         const ripple = document.createElement('span');
@@ -276,10 +281,10 @@
         
         card.appendChild(ripple);
         
-        // 動畫結束後移除節點
+        // 修改：JavaScript 清除節點的時間從 700ms 延長至 1400ms，配合新的動畫時間
         setTimeout(() => {
             ripple.remove();
-        }, 700);
+        }, 1400);
     }
 
     // 啟動資料載入
