@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Daily Verse - remember me</title>
+    <title>Daily Verse - Teal Edition</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,49 +22,49 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* 移除行動版點擊藍色框 */
-            overflow: hidden; /* 防止啟動頁面淡出時出現捲軸 */
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
         }
 
         /* 針對 9:16 優化的卡片 */
         .card {
             background: linear-gradient(145deg, #1e1e1e, #161616);
             width: 100%;
-            max-width: 360px; /* 手機寬度上限 */
-            min-height: 65vh; /* 確保在長手機上有足夠高度 */
+            max-width: 360px;
+            min-height: 65vh;
             padding: 45px 30px;
             border-radius: 30px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
-            justify-content: center; /* 內容垂直居中 */
+            justify-content: center;
             position: relative;
-            overflow: hidden; /* 必須，為了裁切漣漪效果 */
+            overflow: hidden;
             border: 1px solid rgba(255,255,255,0.05);
             cursor: pointer;
-            z-index: 1; /* 確保卡片在啟動頁面下方 */
+            z-index: 1;
         }
 
-        /* === 漣漪效果樣式（用於卡片）- 已修改 === */
+        /* === 漣漪效果：慢速、巨大、湖水色 === */
         .ripple {
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(79, 209, 197, 0.15); /* 湖水色淡化 */
             border-radius: 50%;
             transform: scale(0);
-            /* 修改：動畫持續時間從 0.7s 變為 1.4s (慢一倍) */
-            animation: ripple-animation 1.4s ease-out;
+            /* 速度再慢 50%：1.4s -> 2.1s */
+            animation: ripple-animation 2.1s ease-out;
             pointer-events: none;
         }
 
         @keyframes ripple-animation {
             to {
-                /* 修改：最終放大倍數從 scale(4) 變為 scale(8) (大一倍) */
-                transform: scale(8);
+                /* Size 再大 100%：scale(8) -> scale(16) */
+                transform: scale(16);
                 opacity: 0;
             }
         }
 
-        /* === 啟動頁面（遮罩）樣式 === */
+        /* === 啟動頁面：加密漣漪 === */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -75,16 +75,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 999; /* 最上層 */
+            z-index: 999;
             cursor: pointer;
-            transition: opacity 0.8s ease, visibility 0.8s ease; /* 淡出動畫 */
+            transition: opacity 1.2s ease, visibility 1.2s ease;
         }
 
-        /* 啟動頁面中央的連續漣漪動畫 */
         .splash-ripple-container {
             position: relative;
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
         }
 
         .splash-ripple-circle {
@@ -94,27 +93,31 @@
             transform: translate(-50%, -50%);
             width: 20px;
             height: 20px;
-            background-color: #bb86fc; /* 與心靈小語同色 */
+            background-color: #4FD1C5; /* 湖水色 */
             border-radius: 50%;
             opacity: 0;
-            animation: splash-ripple-loop 2s infinite;
+            /* 動畫週期稍微拉長以配合視覺 */
+            animation: splash-ripple-loop 3s infinite cubic-bezier(0.2, 0, 0.4, 1);
         }
 
-        /* 產生三個不同步的圓圈，製造連續感 */
+        /* 增加到 5 個圓圈讓漣漪更「密」 */
+        .splash-ripple-circle:nth-child(1) { animation-delay: 0s; }
         .splash-ripple-circle:nth-child(2) { animation-delay: 0.6s; }
         .splash-ripple-circle:nth-child(3) { animation-delay: 1.2s; }
+        .splash-ripple-circle:nth-child(4) { animation-delay: 1.8s; }
+        .splash-ripple-circle:nth-child(5) { animation-delay: 2.4s; }
 
         @keyframes splash-ripple-loop {
-            0% { width: 20px; height: 20px; opacity: 0; }
-            10% { opacity: 0.5; }
-            100% { width: 100px; height: 100px; opacity: 0; }
+            0% { width: 0px; height: 0px; opacity: 0; }
+            5% { opacity: 0.4; }
+            100% { width: 150px; height: 150px; opacity: 0; }
         }
 
-        /* === 卡片排版細節優化 === */
+        /* === 卡片排版 === */
         .words {
             font-size: 1.35rem;
             line-height: 1.5;
-            color: #bb86fc;
+            color: #4FD1C5; /* 小語也改為湖水色 */
             font-style: italic;
             margin-bottom: 2rem;
             font-weight: 300;
@@ -127,37 +130,11 @@
             margin: 0 auto 2rem;
         }
 
-        .section {
-            margin-bottom: 1.8rem;
-        }
-
-        .verse-en {
-            font-size: 0.95rem;
-            color: #a0a0a0;
-            line-height: 1.6;
-            margin-bottom: 0.5rem;
-        }
-
-        .ref-en {
-            font-size: 0.75rem;
-            color: #666;
-            letter-spacing: 0.05rem;
-            text-transform: uppercase;
-        }
-
-        .verse-ch {
-            font-size: 1.2rem;
-            color: #ffffff;
-            line-height: 1.7;
-            margin-bottom: 0.6rem;
-            letter-spacing: 0.02rem;
-        }
-
-        .ref-ch {
-            font-size: 0.85rem;
-            color: #666;
-        }
-
+        .section { margin-bottom: 1.8rem; }
+        .verse-en { font-size: 0.95rem; color: #a0a0a0; line-height: 1.6; margin-bottom: 0.5rem; }
+        .ref-en { font-size: 0.75rem; color: #666; letter-spacing: 0.05rem; text-transform: uppercase; }
+        .verse-ch { font-size: 1.2rem; color: #ffffff; line-height: 1.7; margin-bottom: 0.6rem; letter-spacing: 0.02rem; }
+        .ref-ch { font-size: 0.85rem; color: #666; }
         .footer-hint {
             position: absolute;
             bottom: 25px;
@@ -179,6 +156,8 @@
 
 <div id="splash-screen" onclick="startApp(event)">
     <div class="splash-ripple-container">
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
         <div class="splash-ripple-circle"></div>
         <div class="splash-ripple-circle"></div>
         <div class="splash-ripple-circle"></div>
@@ -208,20 +187,17 @@
 
     async function init() {
         try {
-            // 抓取檔案，加上時間戳防止 GitHub 快取
             const resp = await fetch('data.txt?t=' + Date.now());
             dataList = await resp.json();
             displayRandom();
         } catch (e) {
             document.getElementById('words').innerText = "Loading data...";
-            console.error(e);
         }
     }
 
     function displayRandom() {
         if (!dataList.length) return;
         const item = dataList[Math.floor(Math.random() * dataList.length)];
-        
         document.getElementById('words').innerText = item.words;
         document.getElementById('verse-en').innerText = item.en_verse;
         document.getElementById('ref-en').innerText = item.en_ref;
@@ -229,42 +205,32 @@
         document.getElementById('ref-ch').innerText = item.ch_ref;
     }
 
-    // === 核心函數：啟動 App (用戶第一次點擊啟動頁面) ===
     function startApp(event) {
-        // 1. 播放音樂
         if (!isMusicPlaying) {
             const music = document.getElementById('bgMusic');
-            music.play().then(() => {
-                isMusicPlaying = true;
-            }).catch(e => console.log("等待交互播放"));
+            music.play().then(() => { isMusicPlaying = true; }).catch(e => console.log(e));
         }
 
-        // 2. 淡出啟動頁面
         const splash = document.getElementById('splash-screen');
-        splash.style.opacity = '0'; // 設置不透明度為 0
-        splash.style.visibility = 'hidden'; // 動畫結束後隱藏，防止阻擋卡片
+        splash.style.opacity = '0';
+        splash.style.visibility = 'hidden';
 
-        // 3. 在卡片中央觸發一個漣漪效果，作為啟動反饋
         setTimeout(() => {
             const card = document.getElementById('card');
             const rect = card.getBoundingClientRect();
-            // 模擬一個點擊在卡片正中央
             const fakeEvent = {
                 clientX: rect.left + rect.width / 2,
                 clientY: rect.top + rect.height / 2
             };
             createRipple(fakeEvent);
-        }, 300); // 延遲一點點，讓淡出動畫先開始
+        }, 300);
     }
 
-    // === 核心函數：處理卡片點擊 (切換金句) ===
     function handleCardClick(event) {
-        // 音樂已經開始播放，這裡只需處理漣漪和文字切換
         createRipple(event);
         displayRandom();
     }
 
-    // 建立漣漪效果 - 已修改
     function createRipple(event) {
         const card = document.getElementById('card');
         const ripple = document.createElement('span');
@@ -280,14 +246,10 @@
         ripple.classList.add('ripple');
         
         card.appendChild(ripple);
-        
-        // 修改：JavaScript 清除節點的時間從 700ms 延長至 1400ms，配合新的動畫時間
-        setTimeout(() => {
-            ripple.remove();
-        }, 1400);
+        // 清除時間同步增加到 2100ms
+        setTimeout(() => { ripple.remove(); }, 2100);
     }
 
-    // 啟動資料載入
     init();
 </script>
 
