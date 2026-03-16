@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Daily Verse - Tranquil Flow</title>
+    <title>Daily Verse - Minimalist HD</title>
     <style>
         :root {
             --teal-color: #4FD1C5;
@@ -27,8 +27,8 @@
             background: linear-gradient(145deg, #1e1e1e, #161616);
             width: 90%;
             max-width: 360px;
-            min-height: 65vh;
-            padding: 40px 30px;
+            min-height: 60vh; /* 移除小語後稍微縮減高度更緊湊 */
+            padding: 50px 30px;
             border-radius: 30px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             display: flex;
@@ -40,7 +40,7 @@
             z-index: 10;
         }
 
-        /* SVG 高清向量漣漪 */
+        /* SVG 高清向量漣漪 (6秒慢動作) */
         .ripple-svg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -51,7 +51,7 @@
             fill: var(--teal-color);
             fill-opacity: 0.12;
             transform-origin: center;
-            animation: ripple-hd-slow 10s linear forwards; /* 配合文字變慢，漣漪也拉長至 10s */
+            animation: ripple-hd-slow 10s linear forwards; 
         }
         @keyframes ripple-hd-slow {
             0% { transform: translate(-50%, -50%) scale(0); opacity: 0.5; }
@@ -65,16 +65,42 @@
         }
         .fade-in-node.visible { opacity: 1; }
 
-        .words { font-size: 1.35rem; line-height: 1.6; color: var(--teal-color); font-style: italic; margin-bottom: 2rem; text-align: center; font-weight: 300; }
-        .divider { width: 40px; height: 2px; background: #333; margin: 0 auto 2rem; }
-        .section { margin-bottom: 1.8rem; text-align: center; }
-        .verse-en { font-size: 0.95rem; color: #a0a0a0; line-height: 1.6; margin-bottom: 0.5rem; }
-        .ref-en { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-        .verse-ch { font-size: 1.2rem; color: #ffffff; line-height: 1.7; margin-bottom: 0.6rem; }
-        .ref-ch { font-size: 0.85rem; color: #666; }
+        /* 排版樣式 - 英文加大，中文縮小 */
+        .verse-en { 
+            font-size: 1.25rem; /* 加大兩級 */
+            color: var(--teal-color); 
+            line-height: 1.5; 
+            margin-bottom: 0.8rem; 
+            text-align: center;
+            font-weight: 300;
+            font-style: italic;
+        }
+        .ref-en { 
+            font-size: 0.75rem; 
+            color: #666; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .section-ch { 
+            text-align: center; 
+        }
+        .verse-ch { 
+            font-size: 1.1rem; /* 稍微調細 */
+            color: #ffffff; 
+            line-height: 1.8; 
+            margin-bottom: 0.6rem; 
+            letter-spacing: 0.05rem;
+        }
+        .ref-ch { 
+            font-size: 0.8rem; 
+            color: #555; 
+        }
+
         .footer-hint { position: absolute; bottom: 30px; width: 100%; font-size: 0.65rem; color: #222; letter-spacing: 4px; text-align: center; }
 
-        /* 啟動頁面 - 改為 3 個圈 */
+        /* 啟動頁面 - 3 個圈引導 */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -87,15 +113,12 @@
             position: absolute;
             border: 1.5px solid var(--teal-color);
             border-radius: 50%;
-            animation: splash-wave 6s infinite linear; /* 動畫稍微放慢一點點 */
+            animation: splash-wave 6s infinite linear;
             opacity: 0;
         }
-        /* 設定 3 個圓圈的延遲 */
-        .splash-ripple:nth-child(1) { --i: 0; }
-        .splash-ripple:nth-child(2) { --i: 1.5; }
-        .splash-ripple:nth-child(3) { --i: 3; }
-        
-        .splash-ripple { animation-delay: calc(var(--i) * 1s); }
+        .splash-ripple:nth-child(1) { animation-delay: 0s; }
+        .splash-ripple:nth-child(2) { animation-delay: 2s; }
+        .splash-ripple:nth-child(3) { animation-delay: 4s; }
 
         @keyframes splash-wave {
             0% { width: 0; height: 0; opacity: 0; border-width: 2px; }
@@ -119,12 +142,11 @@
 <div class="card" id="card">
     <svg class="ripple-svg" id="ripple-container"></svg>
 
-    <div id="words" class="words fade-in-node">...</div>
-    <div id="div-line" class="divider fade-in-node"></div>
-    <div id="en-verse-node" class="verse-en fade-in-node"></div>
-    <div id="en-ref-node" class="ref-en fade-in-node" style="margin-bottom: 1.8rem;"></div>
+    <div id="en-verse" class="verse-en fade-in-node"></div>
+    
+    <div id="en-ref" class="ref-en fade-in-node"></div>
 
-    <div id="ch-section" class="section fade-in-node">
+    <div id="ch-block" class="section-ch fade-in-node">
         <div id="verse-ch" class="verse-ch"></div>
         <div id="ref-ch" class="ref-ch"></div>
     </div>
@@ -154,9 +176,8 @@
             el.classList.remove('visible');
         });
 
-        document.getElementById('words').innerText = item.words;
-        document.getElementById('en-verse-node').innerText = item.en_verse;
-        document.getElementById('en-ref-node').innerText = item.en_ref;
+        document.getElementById('en-verse').innerText = item.en_verse;
+        document.getElementById('en-ref').innerText = item.en_ref;
         document.getElementById('verse-ch').innerText = item.ch_verse;
         document.getElementById('ref-ch').innerText = item.ch_ref;
 
@@ -166,14 +187,11 @@
         startFadeSequence();
     }
 
-    // 更新：每一句延遲增加 50% (1.2s -> 1.8s)
     function startFadeSequence() {
         const sequence = [
-            { id: 'words', delay: 0 },
-            { id: 'div-line', delay: 1800 },
-            { id: 'en-verse-node', delay: 3600 },
-            { id: 'en-ref-node', delay: 5400 },
-            { id: 'ch-section', delay: 7200 }
+            { id: 'en-verse', delay: 0 },
+            { id: 'en-ref', delay: 1800 },
+            { id: 'ch-block', delay: 3600 } 
         ];
 
         sequence.forEach(item => {
