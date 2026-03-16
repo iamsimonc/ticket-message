@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>HK9600</title>
+    <title>Daily Verse - Final Edition</title>
     <style>
         :root {
             --teal-color: #4FD1C5;
@@ -58,7 +58,7 @@
             100% { transform: translate(-50%, -50%) scale(250); opacity: 0; }
         }
 
-        /* 文字淡入動畫 - 統一控制 */
+        /* 文字同步淡入動畫 */
         .fade-in-node {
             opacity: 0;
             transition: opacity var(--fade-speed) ease-in-out;
@@ -98,9 +98,20 @@
             color: #555; 
         }
 
-        .footer-hint { position: absolute; bottom: 30px; width: 100%; font-size: 0.65rem; color: #222; letter-spacing: 4px; text-align: center; }
+        /* 底部 TAP 提示字 */
+        .footer-hint { 
+            position: absolute; 
+            bottom: 30px; 
+            width: 100%; 
+            left: 0;
+            font-size: 0.65rem; 
+            color: #333; /* 較暗的顏色，不干擾閱讀 */
+            text-transform: uppercase;
+            letter-spacing: 4px; 
+            text-align: center; 
+        }
 
-        /* 啟動頁面 - 3 個圈 */
+        /* 啟動頁面 */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -171,20 +182,16 @@
         const item = dataList[Math.floor(Math.random() * dataList.length)];
         const contentBlock = document.getElementById('content-all');
 
-        // 1. 瞬間隱藏
         contentBlock.style.transition = 'none';
         contentBlock.classList.remove('visible');
 
-        // 2. 填入資料
         document.getElementById('en-verse').innerText = item.en_verse;
         document.getElementById('en-ref').innerText = item.en_ref;
         document.getElementById('verse-ch').innerText = item.ch_verse;
         document.getElementById('ref-ch').innerText = item.ch_ref;
 
-        // 3. 強制重繪
         void document.body.offsetHeight;
 
-        // 4. 恢復動畫並同步淡入
         contentBlock.style.transition = '';
         contentBlock.classList.add('visible');
     }
