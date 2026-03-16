@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Daily Verse - 4s Reading Flow</title>
+    <title>Daily Verse - Tranquil Flow</title>
     <style>
         :root {
             --teal-color: #4FD1C5;
-            --fade-speed: 2s; /* 調慢淡入本身的過渡速度，更有呼吸感 */
+            --fade-speed: 2s; 
         }
 
         body {
@@ -47,14 +47,12 @@
             pointer-events: none;
             z-index: -1;
         }
-
         .ripple-circle {
             fill: var(--teal-color);
             fill-opacity: 0.12;
             transform-origin: center;
-            animation: ripple-hd-slow 8s linear forwards; /* 漣漪也同步拉長到 8 秒 */
+            animation: ripple-hd-slow 10s linear forwards; /* 配合文字變慢，漣漪也拉長至 10s */
         }
-
         @keyframes ripple-hd-slow {
             0% { transform: translate(-50%, -50%) scale(0); opacity: 0.5; }
             100% { transform: translate(-50%, -50%) scale(250); opacity: 0; }
@@ -65,21 +63,9 @@
             opacity: 0;
             transition: opacity var(--fade-speed) ease-in-out;
         }
+        .fade-in-node.visible { opacity: 1; }
 
-        .fade-in-node.visible {
-            opacity: 1;
-        }
-
-        .words {
-            font-size: 1.35rem;
-            line-height: 1.6;
-            color: var(--teal-color);
-            font-style: italic;
-            margin-bottom: 2rem;
-            text-align: center;
-            font-weight: 300;
-        }
-
+        .words { font-size: 1.35rem; line-height: 1.6; color: var(--teal-color); font-style: italic; margin-bottom: 2rem; text-align: center; font-weight: 300; }
         .divider { width: 40px; height: 2px; background: #333; margin: 0 auto 2rem; }
         .section { margin-bottom: 1.8rem; text-align: center; }
         .verse-en { font-size: 0.95rem; color: #a0a0a0; line-height: 1.6; margin-bottom: 0.5rem; }
@@ -88,7 +74,7 @@
         .ref-ch { font-size: 0.85rem; color: #666; }
         .footer-hint { position: absolute; bottom: 30px; width: 100%; font-size: 0.65rem; color: #222; letter-spacing: 4px; text-align: center; }
 
-        /* 啟動頁面 */
+        /* 啟動頁面 - 改為 3 個圈 */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -101,14 +87,20 @@
             position: absolute;
             border: 1.5px solid var(--teal-color);
             border-radius: 50%;
-            animation: splash-wave 5s infinite linear;
+            animation: splash-wave 6s infinite linear; /* 動畫稍微放慢一點點 */
             opacity: 0;
         }
-        .splash-ripple:nth-child(n) { animation-delay: calc(var(--i) * 0.6s); }
+        /* 設定 3 個圓圈的延遲 */
+        .splash-ripple:nth-child(1) { --i: 0; }
+        .splash-ripple:nth-child(2) { --i: 1.5; }
+        .splash-ripple:nth-child(3) { --i: 3; }
+        
+        .splash-ripple { animation-delay: calc(var(--i) * 1s); }
+
         @keyframes splash-wave {
             0% { width: 0; height: 0; opacity: 0; border-width: 2px; }
             10% { opacity: 0.3; }
-            100% { width: 300px; height: 300px; opacity: 0; border-width: 0.5px; }
+            100% { width: 350px; height: 350px; opacity: 0; border-width: 0.5px; }
         }
     </style>
 </head>
@@ -119,12 +111,9 @@
 </audio>
 
 <div id="splash-screen">
-    <div class="splash-ripple" style="--i:0"></div>
-    <div class="splash-ripple" style="--i:1"></div>
-    <div class="splash-ripple" style="--i:2"></div>
-    <div class="splash-ripple" style="--i:3"></div>
-    <div class="splash-ripple" style="--i:4"></div>
-    <div class="splash-ripple" style="--i:5"></div>
+    <div class="splash-ripple"></div>
+    <div class="splash-ripple"></div>
+    <div class="splash-ripple"></div>
 </div>
 
 <div class="card" id="card">
@@ -157,7 +146,6 @@
 
     function prepareAndShowContent() {
         if (!dataList.length) return;
-        
         const item = dataList[Math.floor(Math.random() * dataList.length)];
         const nodes = document.querySelectorAll('.fade-in-node');
 
@@ -173,22 +161,19 @@
         document.getElementById('ref-ch').innerText = item.ch_ref;
 
         void document.body.offsetHeight;
-
-        nodes.forEach(el => {
-            el.style.transition = ''; 
-        });
+        nodes.forEach(el => { el.style.transition = ''; });
 
         startFadeSequence();
     }
 
-    // 更新：每一句之間有足夠的閱讀時間 (總長約 4-5 秒)
+    // 更新：每一句延遲增加 50% (1.2s -> 1.8s)
     function startFadeSequence() {
         const sequence = [
-            { id: 'words', delay: 0 },         // 立即顯示小語
-            { id: 'div-line', delay: 1200 },    // 1.2s 出分隔線
-            { id: 'en-verse-node', delay: 2400 },// 2.4s 出英文經文
-            { id: 'en-ref-node', delay: 3600 },  // 3.6s 出英文章節
-            { id: 'ch-section', delay: 4800 }   // 4.8s 出中文完整區塊
+            { id: 'words', delay: 0 },
+            { id: 'div-line', delay: 1800 },
+            { id: 'en-verse-node', delay: 3600 },
+            { id: 'en-ref-node', delay: 5400 },
+            { id: 'ch-section', delay: 7200 }
         ];
 
         sequence.forEach(item => {
@@ -202,7 +187,7 @@
     function handleAction(event) {
         if (!isStarted) {
             const music = document.getElementById('bgMusic');
-            music.play().catch(e => console.log("Music play blocked"));
+            music.play().catch(e => console.log(e));
             document.getElementById('splash-screen').style.opacity = '0';
             setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 1500);
             isStarted = true;
@@ -228,7 +213,7 @@
         circle.setAttribute("class", "ripple-circle");
 
         svg.appendChild(circle);
-        setTimeout(() => { circle.remove(); }, 8000); // 配合 8s 動畫
+        setTimeout(() => { circle.remove(); }, 10000); 
     }
 
     init();
