@@ -2,13 +2,14 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Daily Verse - Ultra Slow Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Daily Verse - HD Edition</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004613.png">
     <style>
+        /* 基礎深色設定 */
         body {
             background-color: #0f0f0f;
             color: #e0e0e0;
@@ -24,6 +25,7 @@
             overflow: hidden;
         }
 
+        /* 針對 9:16 優化的卡片 */
         .card {
             background: linear-gradient(145deg, #1e1e1e, #161616);
             width: 100%;
@@ -36,71 +38,167 @@
             flex-direction: column;
             justify-content: center;
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* 必須，為了裁切漣漪 */
             border: 1px solid rgba(255,255,255,0.05);
             cursor: pointer;
             z-index: 1;
         }
 
-        /* === 漣漪：強制 10% 均速、極致巨大 === */
+        /* === 修正手機起格的漣漪 (HD 優化) === */
         .ripple {
             position: absolute;
+            /* 修正 1: 音色統一，並使用 rgba 控制透明度，增加質感 */
             background: rgba(79, 209, 197, 0.2); 
             border-radius: 50%;
+            /* 修正 2: 初始大小設為 2px，並精確居中，防止縮放偏離 */
+            width: 2px;
+            height: 2px;
             transform: translate(-50%, -50%) scale(0);
-            /* 改為 linear 確保均速，時間拉長到 6 秒 */
-            animation: ripple-ultra-slow 6s linear forwards; 
+            /* 修正 3: 使用 linear (均速) 配合 long duration (6s)，達到強制慢速 */
+            /* 修正 4: 使用 'forwards' 讓動畫停在最後一格，防止閃爍 */
+            animation: ripple-hd-slow 6s linear forwards; 
             pointer-events: none;
+            /* 這些屬性會由 JS 動態設定 */
             left: var(--x);
             top: var(--y);
+            /* 修正 5: 啟用硬體加速，並優化邊緣渲染 */
+            will-change: transform, opacity;
+            -webkit-font-smoothing: antialiased;
         }
 
-        @keyframes ripple-ultra-slow {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0.3; }
-            100% { transform: translate(-50%, -50%) scale(20); opacity: 0; }
+        @keyframes ripple-hd-slow {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0.5;
+            }
+            100% {
+                /* 修正 6: 巨大的 scale (例如 25000%)，配合 linear 達到極致慢速 */
+                transform: translate(-50%, -50%) scale(250);
+                opacity: 0;
+            }
         }
 
-        /* === 啟動頁面 === */
+        /* === 啟動頁面（遮罩）樣式 === */
         #splash-screen {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: #0f0f0f;
-            display: flex; justify-content: center; align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 999;
             cursor: pointer;
-            transition: opacity 1.5s ease;
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+        }
+
+        .splash-ripple-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
         }
 
         .splash-ripple-circle {
             position: absolute;
-            width: 2px; height: 2px;
-            background-color: #4FD1C5;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 2px;
+            background-color: #4FD1C5; /* 湖水色 */
             border-radius: 50%;
             opacity: 0;
-            /* 啟動漣漪也同步放慢 */
-            animation: splash-slow 5s infinite linear;
+            /* 啟動漣漪也同步調慢並均速 */
+            animation: splash-hd-slow 5s infinite linear;
         }
 
+        /* === 加密漣漪 180% (調整 delay) === */
         .splash-ripple-circle:nth-child(1) { animation-delay: 0s; }
-        .splash-ripple-circle:nth-child(2) { animation-delay: 1s; }
-        .splash-ripple-circle:nth-child(3) { animation-delay: 2s; }
-        .splash-ripple-circle:nth-child(4) { animation-delay: 3s; }
-        .splash-ripple-circle:nth-child(5) { animation-delay: 4s; }
+        .splash-ripple-circle:nth-child(2) { animation-delay: 0.5s; } /* 密 180% -> 延遲縮短 */
+        .splash-ripple-circle:nth-child(3) { animation-delay: 1.0s; }
+        .splash-ripple-circle:nth-child(4) { animation-delay: 1.5s; }
+        .splash-ripple-circle:nth-child(5) { animation-delay: 2.0s; }
+        .splash-ripple-circle:nth-child(6) { animation-delay: 2.5s; } /* 增加圓圈數量 */
+        .splash-ripple-circle:nth-child(7) { animation-delay: 3.0s; }
+        .splash-ripple-circle:nth-child(8) { animation-delay: 3.5s; }
 
-        @keyframes splash-slow {
-            0% { transform: scale(0); opacity: 0; }
-            20% { opacity: 0.4; }
-            100% { transform: scale(100); opacity: 0; }
+        @keyframes splash-hd-slow {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(100);
+                opacity: 0;
+            }
         }
 
-        .words { font-size: 1.35rem; line-height: 1.5; color: #4FD1C5; font-style: italic; margin-bottom: 2rem; font-weight: 300; text-align: center; }
-        .divider { width: 40px; height: 2px; background: #333; margin: 0 auto 2rem; }
-        .section { margin-bottom: 1.8rem; text-align: center; }
-        .verse-en { font-size: 0.95rem; color: #a0a0a0; line-height: 1.6; margin-bottom: 0.5rem; }
-        .ref-en { font-size: 0.75rem; color: #666; letter-spacing: 0.05rem; text-transform: uppercase; }
-        .verse-ch { font-size: 1.2rem; color: #ffffff; line-height: 1.7; margin-bottom: 0.6rem; }
-        .ref-ch { font-size: 0.85rem; color: #666; }
-        .footer-hint { position: absolute; bottom: 25px; width: 100%; font-size: 0.65rem; color: #444; letter-spacing: 3px; text-align: center; }
+        /* === 卡片排版與顏色同步 === */
+        .words {
+            font-size: 1.35rem;
+            line-height: 1.5;
+            color: #4FD1C5; /* 小語也使用湖水色，保持一致 */
+            font-style: italic;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .divider {
+            width: 40px;
+            height: 2px;
+            background: #333;
+            margin: 0 auto 2rem;
+        }
+
+        .section {
+            margin-bottom: 1.8rem;
+            text-align: center;
+        }
+
+        .verse-en {
+            font-size: 0.95rem;
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .ref-en {
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 0.05rem;
+            text-transform: uppercase;
+        }
+
+        .verse-ch {
+            font-size: 1.2rem;
+            color: #ffffff;
+            line-height: 1.7;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.02rem;
+        }
+
+        .ref-ch {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .footer-hint {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            font-size: 0.65rem;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -110,18 +208,32 @@
 </audio>
 
 <div id="splash-screen" onclick="startApp(event)">
-    <div class="splash-ripple-circle"></div>
-    <div class="splash-ripple-circle"></div>
-    <div class="splash-ripple-circle)</div>
-    <div class="splash-ripple-circle"></div>
-    <div class="splash-ripple-circle"></div>
+    <div class="splash-ripple-container">
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+    </div>
 </div>
 
 <div class="card" id="card" onclick="handleCardClick(event)">
     <div id="words" class="words">...</div>
     <div class="divider"></div>
-    <div class="section"><div id="verse-en" class="verse-en"></div><div id="ref-en" class="ref-en"></div></div>
-    <div class="section"><div id="verse-ch" class="verse-ch"></div><div id="ref-ch" class="ref-ch"></div></div>
+    
+    <div class="section">
+        <div id="verse-en" class="verse-en"></div>
+        <div id="ref-en" class="ref-en"></div>
+    </div>
+
+    <div class="section">
+        <div id="verse-ch" class="verse-ch"></div>
+        <div id="ref-ch" class="ref-ch"></div>
+    </div>
+
     <div class="footer-hint">TAP</div>
 </div>
 
@@ -129,17 +241,24 @@
     let dataList = [];
     let isMusicPlaying = false;
 
+    // 初始化：載入 JSON 資料
     async function init() {
         try {
             const resp = await fetch('data.txt?t=' + Date.now());
+            if (!resp.ok) throw new Error('Data load failed');
             dataList = await resp.json();
             displayRandom();
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            document.getElementById('words').innerText = "Loading data...";
+            console.error(e);
+        }
     }
 
+    // 隨機顯示金句
     function displayRandom() {
         if (!dataList.length) return;
         const item = dataList[Math.floor(Math.random() * dataList.length)];
+        
         document.getElementById('words').innerText = item.words;
         document.getElementById('verse-en').innerText = item.en_verse;
         document.getElementById('ref-en').innerText = item.en_ref;
@@ -147,42 +266,64 @@
         document.getElementById('ref-ch').innerText = item.ch_ref;
     }
 
+    // === 核心：啟動 App (第一次點擊) ===
     function startApp(event) {
+        // 播放音樂
         if (!isMusicPlaying) {
-            document.getElementById('bgMusic').play();
-            isMusicPlaying = true;
+            const music = document.getElementById('bgMusic');
+            music.play().then(() => {
+                isMusicPlaying = true;
+            }).catch(e => console.log("等待交互播放"));
         }
-        document.getElementById('splash-screen').style.opacity = '0';
-        setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 1500);
+
+        // 淡出啟動頁面
+        const splash = document.getElementById('splash-screen');
+        splash.style.opacity = '0';
+        // 動畫結束後徹底隱藏，防止阻擋卡片點擊
+        setTimeout(() => splash.style.display = 'none', 1200);
+
+        // 初始化卡片內容並觸發第一次漣漪
+        displayRandom();
         handleCardClick(event);
     }
 
+    // === 核心：卡片點擊 (切換金句) ===
     function handleCardClick(event) {
+        // 音樂已在背景 Loop，這裡處理漣漪和切換
         createRipple(event);
         displayRandom();
     }
 
+    // === 建立 HD 慢速巨大的漣漪效果 ===
     function createRipple(event) {
         const card = document.getElementById('card');
         const ripple = document.createElement('span');
         const rect = card.getBoundingClientRect();
         
-        // 精確計算點擊位置
+        // 精確計算相對於卡片的點擊座標
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
         
+        // 將座標傳遞給 CSS 變數
         ripple.style.setProperty('--x', `${x}px`);
         ripple.style.setProperty('--y', `${y}px`);
-        ripple.style.width = '20px';
-        ripple.style.height = '20px';
+        
+        // 雖然 CSS 定義了 2x2，但 JS 設定大小能確保渲染起點準確
+        ripple.style.width = '2px';
+        ripple.style.height = '2px';
         ripple.classList.add('ripple');
         
         card.appendChild(ripple);
-        // 清除時間同步延長至 6 秒
-        setTimeout(() => { ripple.remove(); }, 6000);
+        
+        // 清除時間需同步延長至 6 秒 (6000ms)，配合動畫時長
+        setTimeout(() => {
+            ripple.remove();
+        }, 6000);
     }
 
+    // 啟動資料載入
     init();
 </script>
+
 </body>
 </html>
