@@ -125,61 +125,86 @@
     <div class="footer-hint">TAP</div>
 </div>
 
-<script>
-    let dataList = [];
+let dataList = [];
     let isStarted = false;
 
     async function init() {
         try {
             const resp = await fetch('data.txt?t=' + Date.now());
             dataList = await resp.json();
-            prepareContent();
-        } catch (e) { console.error("Data error"); }
+            // 初始執行一次內容準備與顯示
+            prepareAndShowContent();
+        } catch (e) { 
+            console.error("Data error"); 
+        }
     }
 
-    function prepareContent() {
+    // 核心優化：將「資料填入」與「動畫觸發」完全分離並嚴格控制順序
+    function prepareAndShowContent() {
         if (!dataList.length) return;
-        const item = dataList[Math.floor(Math.random() * dataList.length)];
         
-        // 重置所有節點狀態
-        document.querySelectorAll('.fade-in-node').forEach(el => el.classList.remove('visible'));
+        const item = dataList[Math.floor(Math.random() * dataList.length)];
+        const nodes = document.querySelectorAll('.fade-in-node');
 
-        // 填入資料
+        // 1. 強制重置：立刻移除所有可見標籤（解決「先顯示再淡出」的問題）
+        nodes.forEach(el => {
+            el.style.transition = 'none'; // 瞬間隱藏，不使用過渡動畫
+            el.classList.remove('visible');
+        });
+
+        // 2. 填入新資料
         document.getElementById('words').innerText = item.words;
         document.getElementById('en-verse-node').innerText = item.en_verse;
         document.getElementById('en-ref-node').innerText = item.en_ref;
         document.getElementById('verse-ch').innerText = item.ch_verse;
         document.getElementById('ref-ch').innerText = item.ch_ref;
 
-        // 啟動指定順序的淡入序列
+        // 3. 強制瀏覽器重繪 (Reflow)，確保 transition: none 已經生效
+        void document.body.offsetHeight;
+
+        // 4. 恢復過渡動畫並啟動淡入序列
+        nodes.forEach(el => {
+            el.style.transition = ''; // 恢復 CSS 中定義的 var(--fade-speed)
+        });
+
         startFadeSequence();
     }
 
+    // 精確控制顯示次序與延遲
     function startFadeSequence() {
         const sequence = [
             { id: 'words', delay: 0 },
             { id: 'div-line', delay: 800 },
             { id: 'en-verse-node', delay: 1600 },
             { id: 'en-ref-node', delay: 2400 },
-            { id: 'ch-section', delay: 3200 } // 中文全組同時出現
+            { id: 'ch-section', delay: 3200 }
         ];
 
         sequence.forEach(item => {
             setTimeout(() => {
-                document.getElementById(item.id).classList.add('visible');
+                const el = document.getElementById(item.id);
+                if (el) el.classList.add('visible');
             }, item.delay);
         });
     }
 
     function handleAction(event) {
         if (!isStarted) {
-            document.getElementById('bgMusic').play();
+            const music = document.getElementById('bgMusic');
+            music.play().catch(e => console.log("Music play blocked"));
+            
             document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 1200);
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+            }, 1200);
+            
             isStarted = true;
+            // 如果 init 已經執行過 prepareAndShowContent，這裡可不必重複，
+            // 但為了確保音樂播放後畫面是同步的，可保留此呼叫
+            prepareAndShowContent();
         } else {
-            // 已移除漣漪效果相關代碼，僅更換內容
-            prepareContent();
+            // 已移除漣漪，直接觸發換句序列
+            prepareAndShowContent();
         }
     }
 
