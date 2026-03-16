@@ -3,224 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Daily Verse - HD Edition</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004613.png">
+    <title>Daily Verse - HD Pro</title>
     <style>
-        /* 基礎深色設定 */
+        :root {
+            --teal-color: #4FD1C5; /* 統一湖水色碼 */
+        }
+
         body {
             background-color: #0f0f0f;
             color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
             overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* 針對 9:16 優化的卡片 */
+        /* 針對 9:16 手機優化 */
         .card {
             background: linear-gradient(145deg, #1e1e1e, #161616);
-            width: 100%;
+            width: 90%;
             max-width: 360px;
             min-height: 65vh;
-            padding: 45px 30px;
+            padding: 40px 30px;
             border-radius: 30px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
             justify-content: center;
             position: relative;
-            overflow: hidden; /* 必須，為了裁切漣漪 */
+            overflow: hidden;
             border: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            z-index: 1;
+            z-index: 10;
         }
 
-        /* === 修正手機起格的漣漪 (HD 優化) === */
-        .ripple {
+        /* === SVG 漣漪：徹底解決起格問題 === */
+        .ripple-svg {
             position: absolute;
-            /* 修正 1: 音色統一，並使用 rgba 控制透明度，增加質感 */
-            background: rgba(79, 209, 197, 0.2); 
-            border-radius: 50%;
-            /* 修正 2: 初始大小設為 2px，並精確居中，防止縮放偏離 */
-            width: 2px;
-            height: 2px;
-            transform: translate(-50%, -50%) scale(0);
-            /* 修正 3: 使用 linear (均速) 配合 long duration (6s)，達到強制慢速 */
-            /* 修正 4: 使用 'forwards' 讓動畫停在最後一格，防止閃爍 */
-            animation: ripple-hd-slow 6s linear forwards; 
-            pointer-events: none;
-            /* 這些屬性會由 JS 動態設定 */
-            left: var(--x);
-            top: var(--y);
-            /* 修正 5: 啟用硬體加速，並優化邊緣渲染 */
-            will-change: transform, opacity;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        @keyframes ripple-hd-slow {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0.5;
-            }
-            100% {
-                /* 修正 6: 巨大的 scale (例如 25000%)，配合 linear 達到極致慢速 */
-                transform: translate(-50%, -50%) scale(250);
-                opacity: 0;
-            }
-        }
-
-        /* === 啟動頁面（遮罩）樣式 === */
-        #splash-screen {
-            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .ripple-circle {
+            fill: var(--teal-color);
+            fill-opacity: 0.15;
+            transform-origin: center;
+            /* 10% 極致慢速：6秒均速擴散 */
+            animation: ripple-grow 6s linear forwards;
+        }
+
+        @keyframes ripple-grow {
+            0% { transform: scale(0); opacity: 0.5; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        /* === 啟動頁面：加密湖水漣漪 === */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0f0f0f;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             z-index: 999;
-            cursor: pointer;
-            transition: opacity 1.2s ease, visibility 1.2s ease;
+            transition: opacity 1.2s ease;
         }
 
-        .splash-ripple-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-        }
-
-        .splash-ripple-circle {
+        .splash-ripple {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 2px;
-            height: 2px;
-            background-color: #4FD1C5; /* 湖水色 */
+            border: 1.5px solid var(--teal-color);
             border-radius: 50%;
+            animation: splash-wave 5s infinite linear;
             opacity: 0;
-            /* 啟動漣漪也同步調慢並均速 */
-            animation: splash-hd-slow 5s infinite linear;
         }
 
-        /* === 加密漣漪 180% (調整 delay) === */
-        .splash-ripple-circle:nth-child(1) { animation-delay: 0s; }
-        .splash-ripple-circle:nth-child(2) { animation-delay: 0.5s; } /* 密 180% -> 延遲縮短 */
-        .splash-ripple-circle:nth-child(3) { animation-delay: 1.0s; }
-        .splash-ripple-circle:nth-child(4) { animation-delay: 1.5s; }
-        .splash-ripple-circle:nth-child(5) { animation-delay: 2.0s; }
-        .splash-ripple-circle:nth-child(6) { animation-delay: 2.5s; } /* 增加圓圈數量 */
-        .splash-ripple-circle:nth-child(7) { animation-delay: 3.0s; }
-        .splash-ripple-circle:nth-child(8) { animation-delay: 3.5s; }
+        /* 加密 180% 效果 */
+        .splash-ripple:nth-child(1) { animation-delay: 0s; }
+        .splash-ripple:nth-child(2) { animation-delay: 0.6s; }
+        .splash-ripple:nth-child(3) { animation-delay: 1.2s; }
+        .splash-ripple:nth-child(4) { animation-delay: 1.8s; }
+        .splash-ripple:nth-child(5) { animation-delay: 2.4s; }
+        .splash-ripple:nth-child(6) { animation-delay: 3s; }
 
-        @keyframes splash-hd-slow {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.4;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(100);
-                opacity: 0;
-            }
+        @keyframes splash-wave {
+            0% { width: 0; height: 0; opacity: 0; border-width: 2px; }
+            10% { opacity: 0.3; }
+            100% { width: 300px; height: 300px; opacity: 0; border-width: 0.5px; }
         }
 
-        /* === 卡片排版與顏色同步 === */
+        /* === 文字排版與顏色同步 === */
         .words {
             font-size: 1.35rem;
-            line-height: 1.5;
-            color: #4FD1C5; /* 小語也使用湖水色，保持一致 */
+            line-height: 1.6;
+            color: var(--teal-color); /* 與漣漪顏色完全一致 */
             font-style: italic;
             margin-bottom: 2rem;
+            text-align: center;
             font-weight: 300;
-            text-align: center;
         }
 
-        .divider {
-            width: 40px;
-            height: 2px;
-            background: #333;
-            margin: 0 auto 2rem;
-        }
-
-        .section {
-            margin-bottom: 1.8rem;
-            text-align: center;
-        }
-
-        .verse-en {
-            font-size: 0.95rem;
-            color: #a0a0a0;
-            line-height: 1.6;
-            margin-bottom: 0.5rem;
-        }
-
-        .ref-en {
-            font-size: 0.75rem;
-            color: #666;
-            letter-spacing: 0.05rem;
-            text-transform: uppercase;
-        }
-
-        .verse-ch {
-            font-size: 1.2rem;
-            color: #ffffff;
-            line-height: 1.7;
-            margin-bottom: 0.6rem;
-            letter-spacing: 0.02rem;
-        }
-
-        .ref-ch {
-            font-size: 0.85rem;
-            color: #666;
-        }
-
-        .footer-hint {
-            position: absolute;
-            bottom: 25px;
-            left: 0;
-            right: 0;
-            font-size: 0.65rem;
-            color: #444;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-align: center;
-        }
+        .divider { width: 40px; height: 2px; background: #333; margin: 0 auto 2rem; }
+        .section { margin-bottom: 1.8rem; text-align: center; }
+        .verse-en { font-size: 0.95rem; color: #a0a0a0; line-height: 1.6; margin-bottom: 0.5rem; }
+        .ref-en { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .verse-ch { font-size: 1.2rem; color: #ffffff; line-height: 1.7; margin-bottom: 0.6rem; }
+        .ref-ch { font-size: 0.85rem; color: #666; }
+        .footer-hint { position: absolute; bottom: 30px; width: 100%; font-size: 0.65rem; color: #333; letter-spacing: 4px; text-align: center; }
     </style>
 </head>
-<body>
+<body onclick="handleAction(event)">
 
 <audio id="bgMusic" loop playsinline>
     <source src="rememberme.mp3" type="audio/mpeg">
 </audio>
 
-<div id="splash-screen" onclick="startApp(event)">
-    <div class="splash-ripple-container">
-        <div class="splash-ripple-circle"></div>
-        <div class="splash-ripple-circle"></div>
-        <div class="splash-ripple-circle"></div>
-        <div class="splash-ripple-circle"></div>
-        <div class="splash-ripple-circle"></div>
-        <div class="splash-ripple-circle"></div>
-        <div class="splash-ripple-circle"></div>
-        <div class="splash-ripple-circle"></div>
-    </div>
+<div id="splash-screen">
+    <div class="splash-ripple"></div>
+    <div class="splash-ripple"></div>
+    <div class="splash-ripple"></div>
+    <div class="splash-ripple"></div>
+    <div class="splash-ripple"></div>
+    <div class="splash-ripple"></div>
 </div>
 
-<div class="card" id="card" onclick="handleCardClick(event)">
+<div class="card" id="card">
+    <svg class="ripple-svg" id="ripple-container"></svg>
+    
     <div id="words" class="words">...</div>
     <div class="divider"></div>
     
@@ -239,26 +152,19 @@
 
 <script>
     let dataList = [];
-    let isMusicPlaying = false;
+    let isStarted = false;
 
-    // 初始化：載入 JSON 資料
     async function init() {
         try {
             const resp = await fetch('data.txt?t=' + Date.now());
-            if (!resp.ok) throw new Error('Data load failed');
             dataList = await resp.json();
             displayRandom();
-        } catch (e) {
-            document.getElementById('words').innerText = "Loading data...";
-            console.error(e);
-        }
+        } catch (e) { console.error("Data error"); }
     }
 
-    // 隨機顯示金句
     function displayRandom() {
         if (!dataList.length) return;
         const item = dataList[Math.floor(Math.random() * dataList.length)];
-        
         document.getElementById('words').innerText = item.words;
         document.getElementById('verse-en').innerText = item.en_verse;
         document.getElementById('ref-en').innerText = item.en_ref;
@@ -266,64 +172,40 @@
         document.getElementById('ref-ch').innerText = item.ch_ref;
     }
 
-    // === 核心：啟動 App (第一次點擊) ===
-    function startApp(event) {
-        // 播放音樂
-        if (!isMusicPlaying) {
-            const music = document.getElementById('bgMusic');
-            music.play().then(() => {
-                isMusicPlaying = true;
-            }).catch(e => console.log("等待交互播放"));
+    function handleAction(event) {
+        if (!isStarted) {
+            document.getElementById('bgMusic').play();
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 1200);
+            isStarted = true;
         }
-
-        // 淡出啟動頁面
-        const splash = document.getElementById('splash-screen');
-        splash.style.opacity = '0';
-        // 動畫結束後徹底隱藏，防止阻擋卡片點擊
-        setTimeout(() => splash.style.display = 'none', 1200);
-
-        // 初始化卡片內容並觸發第一次漣漪
-        displayRandom();
-        handleCardClick(event);
-    }
-
-    // === 核心：卡片點擊 (切換金句) ===
-    function handleCardClick(event) {
-        // 音樂已在背景 Loop，這裡處理漣漪和切換
-        createRipple(event);
+        createSvgRipple(event);
         displayRandom();
     }
 
-    // === 建立 HD 慢速巨大的漣漪效果 ===
-    function createRipple(event) {
+    function createSvgRipple(event) {
+        const svg = document.getElementById('ripple-container');
         const card = document.getElementById('card');
-        const ripple = document.createElement('span');
         const rect = card.getBoundingClientRect();
         
-        // 精確計算相對於卡片的點擊座標
+        // 計算點擊相對於卡片的位置
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
-        
-        // 將座標傳遞給 CSS 變數
-        ripple.style.setProperty('--x', `${x}px`);
-        ripple.style.setProperty('--y', `${y}px`);
-        
-        // 雖然 CSS 定義了 2x2，但 JS 設定大小能確保渲染起點準確
-        ripple.style.width = '2px';
-        ripple.style.height = '2px';
-        ripple.classList.add('ripple');
-        
-        card.appendChild(ripple);
-        
-        // 清除時間需同步延長至 6 秒 (6000ms)，配合動畫時長
-        setTimeout(() => {
-            ripple.remove();
-        }, 6000);
+
+        // 建立 SVG 圓形
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x);
+        circle.setAttribute("cy", y);
+        circle.setAttribute("r", rect.width * 1.5); // 初始半徑，會被 scale 控制
+        circle.setAttribute("class", "ripple-circle");
+
+        svg.appendChild(circle);
+
+        // 6秒後移除，配合動畫
+        setTimeout(() => circle.remove(), 6000);
     }
 
-    // 啟動資料載入
     init();
 </script>
-
 </body>
 </html>
