@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Daily Verse - Graceful Fade</title>
+    <style>
+        :root {
+            --teal-color: #4FD1C5;
+            --fade-speed: 1.5s; /* 每一段文字淡入的時間 */
+        }
+
+        body {
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #1e1e1e, #161616);
+            width: 90%;
+            max-width: 360px;
+            min-height: 65vh;
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            z-index: 10;
+        }
+
+        /* SVG 漣漪樣式 (維持 HD 向量) */
+        .ripple-svg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .ripple-circle {
+            fill: var(--teal-color);
+            fill-opacity: 0.15;
+            transform-origin: center;
+            animation: ripple-grow 6s linear forwards;
+        }
+        @keyframes ripple-grow {
+            0% { transform: scale(0); opacity: 0.5; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        /* === 逐句淡入動畫設定 === */
+        .fade-in-node {
+            opacity: 0;
+            transition: opacity var(--fade-speed) ease;
+        }
+
+        .fade-in-node.visible {
+            opacity: 1;
+        }
+
+        /* 排版樣式 */
+        .words {
+            font-size: 1.35rem;
+            line-height: 1.6;
+            color: var(--teal-color);
+            font-style: italic;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        .divider { width: 40px; height: 2px; background: #333; margin: 0 auto 2rem; }
+        .section { margin-bottom: 1.8rem; text-align: center; }
+        .verse-en { font-size: 0.95rem; color: #a0a0a0; line-height: 1.6; margin-bottom: 0.5rem; }
+        .ref-en { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .verse-ch { font-size: 1.2rem; color: #ffffff; line-height: 1.7; margin-bottom: 0.6rem; }
+        .ref-ch { font-size: 0.85rem; color: #666; }
+        .footer-hint { position: absolute; bottom: 30px; width: 100%; font-size: 0.65rem; color: #222; letter-spacing: 4px; text-align: center; }
+
+        /* 啟動頁面樣式 (維持加密湖水漣漪) */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0f0f0f;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 999;
+            transition: opacity 1.2s ease;
+        }
+        .splash-ripple {
+            position: absolute;
+            border: 1.5px solid var(--teal-color);
+            border-radius: 50%;
+            animation: splash-wave 5s infinite linear;
+            opacity: 0;
+        }
+        .splash-ripple:nth-child(n) { animation-delay: calc(var(--i) * 0.6s); }
+        @keyframes splash-wave {
+            0% { width: 0; height: 0; opacity: 0; border-width: 2px; }
+            10% { opacity: 0.3; }
+            100% { width: 300px; height: 300px; opacity: 0; border-width: 0.5px; }
+        }
+    </style>
+</head>
+<body onclick="handleAction(event)">
+
+<audio id="bgMusic" loop playsinline>
+    <source src="rememberme.mp3" type="audio/mpeg">
+</audio>
+
+<div id="splash-screen">
+    <div class="splash-ripple" style="--i:0"></div>
+    <div class="splash-ripple" style="--i:1"></div>
+    <div class="splash-ripple" style="--i:2"></div>
+    <div class="splash-ripple" style="--i:3"></div>
+    <div class="splash-ripple" style="--i:4"></div>
+    <div class="splash-ripple" style="--i:5"></div>
+</div>
+
+<div class="card" id="card">
+    <svg class="ripple-svg" id="ripple-container"></svg>
+    
+    <div id="words" class="words fade-in-node">...</div>
+    
+    <div id="div-line" class="divider fade-in-node"></div>
+    
+    <div id="ch-section" class="section fade-in-node">
+        <div id="verse-ch" class="verse-ch"></div>
+        <div id="ref-ch" class="ref-ch"></div>
+    </div>
+
+    <div id="en-section" class="section fade-in-node">
+        <div id="verse-en" class="verse-en"></div>
+        <div id="ref-en" class="ref-en"></div>
+    </div>
+
+    <div class="footer-hint">TAP</div>
+</div>
+
+<script>
+    let dataList = [];
+    let isStarted = false;
+
+    async function init() {
+        try {
+            const resp = await fetch('data.txt?t=' + Date.now());
+            dataList = await resp.json();
+            prepareContent();
+        } catch (e) { console.error("Data error"); }
+    }
+
+    // 準備內容但不顯示
+    function prepareContent() {
+        if (!dataList.length) return;
+        const item = dataList[Math.floor(Math.random() * dataList.length)];
+        
+        // 先移除所有可見狀態
+        document.querySelectorAll('.fade-in-node').forEach(el => el.classList.remove('visible'));
+
+        // 填入資料
+        document.getElementById('words').innerText = item.words;
+        document.getElementById('verse-ch').innerText = item.ch_verse;
+        document.getElementById('ref-ch').innerText = item.ch_ref;
+        document.getElementById('verse-en').innerText = item.en_verse;
+        document.getElementById('ref-en').innerText = item.en_ref;
+
+        // 啟動逐句淡入序列
+        startFadeSequence();
+    }
+
+    // 控制淡入順序
+    function startFadeSequence() {
+        const nodes = [
+            document.getElementById('words'),
+            document.getElementById('div-line'),
+            document.getElementById('ch-section'),
+            document.getElementById('en-section')
+        ];
+
+        // 每隔 1.2 秒顯示下一段，總共約 4 秒完成
+        nodes.forEach((node, index) => {
+            setTimeout(() => {
+                node.classList.add('visible');
+            }, index * 1200); 
+        });
+    }
+
+    function handleAction(event) {
+        if (!isStarted) {
+            document.getElementById('bgMusic').play();
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 1200);
+            isStarted = true;
+            // 第一次進入已經在 init 呼叫過一次 prepareContent 了
+        } else {
+            createSvgRipple(event);
+            prepareContent();
+        }
+    }
+
+    function createSvgRipple(event) {
+        const svg = document.getElementById('ripple-container');
+        const card = document.getElementById('card');
+        const rect = card.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x);
+        circle.setAttribute("cy", y);
+        circle.setAttribute("r", rect.width * 1.5);
+        circle.setAttribute("class", "ripple-circle");
+        svg.appendChild(circle);
+        setTimeout(() => circle.remove(), 6000);
+    }
+
+    init();
+</script>
+</body>
+</html>
