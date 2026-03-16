@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Daily Verse - Music Edition</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="每日金句">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004613.png">
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #1e1e1e, #161616);
+            width: 100%;
+            max-width: 360px;
+            min-height: 65vh;
+            padding: 45px 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.7s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        .words {
+            font-size: 1.35rem;
+            line-height: 1.5;
+            color: #bb86fc;
+            font-style: italic;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .divider {
+            width: 40px;
+            height: 2px;
+            background: #333;
+            margin: 0 auto 2rem;
+        }
+
+        .section { margin-bottom: 1.8rem; }
+
+        .verse-en {
+            font-size: 0.95rem;
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .ref-en {
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 0.05rem;
+            text-transform: uppercase;
+        }
+
+        .verse-ch {
+            font-size: 1.2rem;
+            color: #ffffff;
+            line-height: 1.7;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.02rem;
+        }
+
+        .ref-ch { font-size: 0.85rem; color: #666; }
+
+        .footer-hint {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            font-size: 0.65rem;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body onclick="handleGlobalClick(event)">
+
+    <audio id="bgMusic" loop>
+        <source src="rememberme.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card" id="card">
+        <div id="words" class="words">...</div>
+        <div class="divider"></div>
+        
+        <div class="section">
+            <div id="verse-en" class="verse-en"></div>
+            <div id="ref-en" class="ref-en"></div>
+        </div>
+
+        <div class="section">
+            <div id="verse-ch" class="verse-ch"></div>
+            <div id="ref-ch" class="ref-ch"></div>
+        </div>
+
+        <div class="footer-hint">Tap anywhere</div>
+    </div>
+
+    <script>
+        let dataList = [];
+        let musicStarted = false; // 追蹤音樂是否已經啟動
+
+        async function init() {
+            try {
+                const resp = await fetch('data.txt?t=' + Date.now());
+                dataList = await resp.json();
+                displayRandom();
+            } catch (e) {
+                document.getElementById('words').innerText = "Loading data...";
+            }
+        }
+
+        function displayRandom() {
+            if (!dataList.length) return;
+            const item = dataList[Math.floor(Math.random() * dataList.length)];
+            
+            document.getElementById('words').innerText = item.words;
+            document.getElementById('verse-en').innerText = item.en_verse;
+            document.getElementById('ref-en').innerText = item.en_ref;
+            document.getElementById('verse-ch').innerText = item.ch_verse;
+            document.getElementById('ref-ch').innerText = item.ch_ref;
+        }
+
+        function handleGlobalClick(event) {
+            // 當用家第一次點擊時播放音樂
+            if (!musicStarted) {
+                const music = document.getElementById('bgMusic');
+                music.play();
+                musicStarted = true;
+            }
+
+            createRipple(event);
+            displayRandom();
+        }
+
+        function createRipple(event) {
+            const card = document.getElementById('card');
+            const ripple = document.createElement('span');
+            const rect = card.getBoundingClientRect();
+            
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            ripple.classList.add('ripple');
+            
+            card.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 700);
+        }
+
+        init();
+    </script>
+</body>
+</html>
