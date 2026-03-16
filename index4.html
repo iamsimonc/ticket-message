@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Daily Verse - Final Master</title>
+    <title>Daily Verse - 4s Reading Flow</title>
     <style>
         :root {
             --teal-color: #4FD1C5;
-            --fade-speed: 1.5s; 
+            --fade-speed: 2s; /* 調慢淡入本身的過渡速度，更有呼吸感 */
         }
 
         body {
@@ -23,7 +23,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 針對 9:16 優化的卡片 */
         .card {
             background: linear-gradient(145deg, #1e1e1e, #161616);
             width: 90%;
@@ -41,7 +40,7 @@
             z-index: 10;
         }
 
-        /* SVG 高清向量漣漪樣式 */
+        /* SVG 高清向量漣漪 */
         .ripple-svg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -51,10 +50,9 @@
 
         .ripple-circle {
             fill: var(--teal-color);
-            fill-opacity: 0.15;
+            fill-opacity: 0.12;
             transform-origin: center;
-            /* 極致慢速：6秒均速擴散 */
-            animation: ripple-hd-slow 6s linear forwards;
+            animation: ripple-hd-slow 8s linear forwards; /* 漣漪也同步拉長到 8 秒 */
         }
 
         @keyframes ripple-hd-slow {
@@ -62,17 +60,16 @@
             100% { transform: translate(-50%, -50%) scale(250); opacity: 0; }
         }
 
-        /* 淡入動畫設定 */
+        /* 文字淡入動畫 */
         .fade-in-node {
             opacity: 0;
-            transition: opacity var(--fade-speed) ease;
+            transition: opacity var(--fade-speed) ease-in-out;
         }
 
         .fade-in-node.visible {
             opacity: 1;
         }
 
-        /* 排版樣式 */
         .words {
             font-size: 1.35rem;
             line-height: 1.6;
@@ -91,14 +88,14 @@
         .ref-ch { font-size: 0.85rem; color: #666; }
         .footer-hint { position: absolute; bottom: 30px; width: 100%; font-size: 0.65rem; color: #222; letter-spacing: 4px; text-align: center; }
 
-        /* 啟動頁面樣式 */
+        /* 啟動頁面 */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0f0f0f;
             display: flex; justify-content: center; align-items: center;
             z-index: 999;
-            transition: opacity 1.2s ease;
+            transition: opacity 1.5s ease;
         }
         .splash-ripple {
             position: absolute;
@@ -107,7 +104,6 @@
             animation: splash-wave 5s infinite linear;
             opacity: 0;
         }
-        /* 加密 180% 密度 */
         .splash-ripple:nth-child(n) { animation-delay: calc(var(--i) * 0.6s); }
         @keyframes splash-wave {
             0% { width: 0; height: 0; opacity: 0; border-width: 2px; }
@@ -156,9 +152,7 @@
             const resp = await fetch('data.txt?t=' + Date.now());
             dataList = await resp.json();
             prepareAndShowContent();
-        } catch (e) { 
-            console.error("Data error"); 
-        }
+        } catch (e) { console.error("Data error"); }
     }
 
     function prepareAndShowContent() {
@@ -167,37 +161,34 @@
         const item = dataList[Math.floor(Math.random() * dataList.length)];
         const nodes = document.querySelectorAll('.fade-in-node');
 
-        // 1. 強制瞬間重置
         nodes.forEach(el => {
             el.style.transition = 'none';
             el.classList.remove('visible');
         });
 
-        // 2. 填入新資料
         document.getElementById('words').innerText = item.words;
         document.getElementById('en-verse-node').innerText = item.en_verse;
         document.getElementById('en-ref-node').innerText = item.en_ref;
         document.getElementById('verse-ch').innerText = item.ch_verse;
         document.getElementById('ref-ch').innerText = item.ch_ref;
 
-        // 3. 強制重繪
         void document.body.offsetHeight;
 
-        // 4. 恢復動畫並啟動序列
         nodes.forEach(el => {
-            el.style.transition = '';
+            el.style.transition = ''; 
         });
 
         startFadeSequence();
     }
 
+    // 更新：每一句之間有足夠的閱讀時間 (總長約 4-5 秒)
     function startFadeSequence() {
         const sequence = [
-            { id: 'words', delay: 0 },
-            { id: 'div-line', delay: 800 },
-            { id: 'en-verse-node', delay: 1600 },
-            { id: 'en-ref-node', delay: 2400 },
-            { id: 'ch-section', delay: 3200 }
+            { id: 'words', delay: 0 },         // 立即顯示小語
+            { id: 'div-line', delay: 1200 },    // 1.2s 出分隔線
+            { id: 'en-verse-node', delay: 2400 },// 2.4s 出英文經文
+            { id: 'en-ref-node', delay: 3600 },  // 3.6s 出英文章節
+            { id: 'ch-section', delay: 4800 }   // 4.8s 出中文完整區塊
         ];
 
         sequence.forEach(item => {
@@ -212,14 +203,9 @@
         if (!isStarted) {
             const music = document.getElementById('bgMusic');
             music.play().catch(e => console.log("Music play blocked"));
-            
             document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-            }, 1200);
-            
+            setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 1500);
             isStarted = true;
-            // 第一次點擊啟動音樂並切換
             createSvgRipple(event);
             prepareAndShowContent();
         } else {
@@ -232,23 +218,17 @@
         const svg = document.getElementById('ripple-container');
         const card = document.getElementById('card');
         const rect = card.getBoundingClientRect();
-        
-        // 精確計算點擊位置
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
-        circle.setAttribute("r", 2); // 初始小點
+        circle.setAttribute("r", 2);
         circle.setAttribute("class", "ripple-circle");
 
         svg.appendChild(circle);
-
-        // 6秒後移除，配合動畫時長
-        setTimeout(() => {
-            circle.remove();
-        }, 6000);
+        setTimeout(() => { circle.remove(); }, 8000); // 配合 8s 動畫
     }
 
     init();
