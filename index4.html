@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Daily Verse - Graceful Fade</title>
+    <title>Daily Verse - Clean Fade</title>
     <style>
         :root {
             --teal-color: #4FD1C5;
-            --fade-speed: 1.5s; /* 每一段文字淡入的時間 */
+            --fade-speed: 1.5s; 
         }
 
         body {
@@ -40,25 +40,7 @@
             z-index: 10;
         }
 
-        /* SVG 漣漪樣式 (維持 HD 向量) */
-        .ripple-svg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-        .ripple-circle {
-            fill: var(--teal-color);
-            fill-opacity: 0.15;
-            transform-origin: center;
-            animation: ripple-grow 6s linear forwards;
-        }
-        @keyframes ripple-grow {
-            0% { transform: scale(0); opacity: 0.5; }
-            100% { transform: scale(4); opacity: 0; }
-        }
-
-        /* === 逐句淡入動畫設定 === */
+        /* 淡入動畫設定 */
         .fade-in-node {
             opacity: 0;
             transition: opacity var(--fade-speed) ease;
@@ -87,7 +69,7 @@
         .ref-ch { font-size: 0.85rem; color: #666; }
         .footer-hint { position: absolute; bottom: 30px; width: 100%; font-size: 0.65rem; color: #222; letter-spacing: 4px; text-align: center; }
 
-        /* 啟動頁面樣式 (維持加密湖水漣漪) */
+        /* 啟動頁面樣式 (維持湖水色漣漪引導用戶) */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -127,20 +109,17 @@
 </div>
 
 <div class="card" id="card">
-    <svg class="ripple-svg" id="ripple-container"></svg>
-    
     <div id="words" class="words fade-in-node">...</div>
     
     <div id="div-line" class="divider fade-in-node"></div>
     
+    <div id="en-verse-node" class="verse-en fade-in-node"></div>
+    
+    <div id="en-ref-node" class="ref-en fade-in-node" style="margin-bottom: 1.8rem;"></div>
+
     <div id="ch-section" class="section fade-in-node">
         <div id="verse-ch" class="verse-ch"></div>
         <div id="ref-ch" class="ref-ch"></div>
-    </div>
-
-    <div id="en-section" class="section fade-in-node">
-        <div id="verse-en" class="verse-en"></div>
-        <div id="ref-en" class="ref-en"></div>
     </div>
 
     <div class="footer-hint">TAP</div>
@@ -158,39 +137,37 @@
         } catch (e) { console.error("Data error"); }
     }
 
-    // 準備內容但不顯示
     function prepareContent() {
         if (!dataList.length) return;
         const item = dataList[Math.floor(Math.random() * dataList.length)];
         
-        // 先移除所有可見狀態
+        // 重置所有節點狀態
         document.querySelectorAll('.fade-in-node').forEach(el => el.classList.remove('visible'));
 
         // 填入資料
         document.getElementById('words').innerText = item.words;
+        document.getElementById('en-verse-node').innerText = item.en_verse;
+        document.getElementById('en-ref-node').innerText = item.en_ref;
         document.getElementById('verse-ch').innerText = item.ch_verse;
         document.getElementById('ref-ch').innerText = item.ch_ref;
-        document.getElementById('verse-en').innerText = item.en_verse;
-        document.getElementById('ref-en').innerText = item.en_ref;
 
-        // 啟動逐句淡入序列
+        // 啟動指定順序的淡入序列
         startFadeSequence();
     }
 
-    // 控制淡入順序
     function startFadeSequence() {
-        const nodes = [
-            document.getElementById('words'),
-            document.getElementById('div-line'),
-            document.getElementById('ch-section'),
-            document.getElementById('en-section')
+        const sequence = [
+            { id: 'words', delay: 0 },
+            { id: 'div-line', delay: 800 },
+            { id: 'en-verse-node', delay: 1600 },
+            { id: 'en-ref-node', delay: 2400 },
+            { id: 'ch-section', delay: 3200 } // 中文全組同時出現
         ];
 
-        // 每隔 1.2 秒顯示下一段，總共約 4 秒完成
-        nodes.forEach((node, index) => {
+        sequence.forEach(item => {
             setTimeout(() => {
-                node.classList.add('visible');
-            }, index * 1200); 
+                document.getElementById(item.id).classList.add('visible');
+            }, item.delay);
         });
     }
 
@@ -200,27 +177,10 @@
             document.getElementById('splash-screen').style.opacity = '0';
             setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 1200);
             isStarted = true;
-            // 第一次進入已經在 init 呼叫過一次 prepareContent 了
         } else {
-            createSvgRipple(event);
+            // 已移除漣漪效果相關代碼，僅更換內容
             prepareContent();
         }
-    }
-
-    function createSvgRipple(event) {
-        const svg = document.getElementById('ripple-container');
-        const card = document.getElementById('card');
-        const rect = card.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("cx", x);
-        circle.setAttribute("cy", y);
-        circle.setAttribute("r", rect.width * 1.5);
-        circle.setAttribute("class", "ripple-circle");
-        svg.appendChild(circle);
-        setTimeout(() => circle.remove(), 6000);
     }
 
     init();
