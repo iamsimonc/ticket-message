@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Daily Verse</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="每日金句">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004613.png">
+    <style>
+        /* 基礎深色設定 */
+        body {
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* 移除行動版點擊藍色框 */
+            overflow: hidden; /* 防止啟動頁面淡出時出現捲軸 */
+        }
+
+        /* 針對 9:16 優化的卡片 */
+        .card {
+            background: linear-gradient(145deg, #1e1e1e, #161616);
+            width: 100%;
+            max-width: 360px; /* 手機寬度上限 */
+            min-height: 65vh; /* 確保在長手機上有足夠高度 */
+            padding: 45px 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 內容垂直居中 */
+            position: relative;
+            overflow: hidden; /* 必須，為了裁切漣漪效果 */
+            border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            z-index: 1; /* 確保卡片在啟動頁面下方 */
+        }
+
+        /* 漣漪效果樣式（用於卡片） */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.7s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* === 啟動頁面（遮罩）樣式 === */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0f0f0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* 最上層 */
+            cursor: pointer;
+            transition: opacity 0.8s ease, visibility 0.8s ease; /* 淡出動畫 */
+        }
+
+        /* 啟動頁面中央的連續漣漪動畫 */
+        .splash-ripple-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .splash-ripple-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background-color: #bb86fc; /* 與心靈小語同色 */
+            border-radius: 50%;
+            opacity: 0;
+            animation: splash-ripple-loop 2s infinite;
+        }
+
+        /* 產生三個不同步的圓圈，製造連續感 */
+        .splash-ripple-circle:nth-child(2) { animation-delay: 0.6s; }
+        .splash-ripple-circle:nth-child(3) { animation-delay: 1.2s; }
+
+        @keyframes splash-ripple-loop {
+            0% { width: 20px; height: 20px; opacity: 0; }
+            10% { opacity: 0.5; }
+            100% { width: 100px; height: 100px; opacity: 0; }
+        }
+
+        /* === 卡片排版細節優化 === */
+        .words {
+            font-size: 1.35rem;
+            line-height: 1.5;
+            color: #bb86fc;
+            font-style: italic;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .divider {
+            width: 40px;
+            height: 2px;
+            background: #333;
+            margin: 0 auto 2rem;
+        }
+
+        .section {
+            margin-bottom: 1.8rem;
+        }
+
+        .verse-en {
+            font-size: 0.95rem;
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .ref-en {
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 0.05rem;
+            text-transform: uppercase;
+        }
+
+        .verse-ch {
+            font-size: 1.2rem;
+            color: #ffffff;
+            line-height: 1.7;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.02rem;
+        }
+
+        .ref-ch {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .footer-hint {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            font-size: 0.65rem;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<audio id="bgMusic" loop playsinline>
+    <source src="rememberme.mp3" type="audio/mpeg">
+</audio>
+
+<div id="splash-screen" onclick="startApp(event)">
+    <div class="splash-ripple-container">
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+        <div class="splash-ripple-circle"></div>
+    </div>
+</div>
+
+<div class="card" id="card" onclick="handleCardClick(event)">
+    <div id="words" class="words">...</div>
+    <div class="divider"></div>
+    
+    <div class="section">
+        <div id="verse-en" class="verse-en"></div>
+        <div id="ref-en" class="ref-en"></div>
+    </div>
+
+    <div class="section">
+        <div id="verse-ch" class="verse-ch"></div>
+        <div id="ref-ch" class="ref-ch"></div>
+    </div>
+
+    <div class="footer-hint">Tap</div>
+</div>
+
+<script>
+    let dataList = [];
+    let isMusicPlaying = false;
+
+    async function init() {
+        try {
+            // 抓取檔案，加上時間戳防止 GitHub 快取
+            const resp = await fetch('data.txt?t=' + Date.now());
+            dataList = await resp.json();
+            displayRandom();
+        } catch (e) {
+            document.getElementById('words').innerText = "Loading data...";
+            console.error(e);
+        }
+    }
+
+    function displayRandom() {
+        if (!dataList.length) return;
+        const item = dataList[Math.floor(Math.random() * dataList.length)];
+        
+        document.getElementById('words').innerText = item.words;
+        document.getElementById('verse-en').innerText = item.en_verse;
+        document.getElementById('ref-en').innerText = item.en_ref;
+        document.getElementById('verse-ch').innerText = item.ch_verse;
+        document.getElementById('ref-ch').innerText = item.ch_ref;
+    }
+
+    // === 核心函數：啟動 App (用戶第一次點擊啟動頁面) ===
+    function startApp(event) {
+        // 1. 播放音樂
+        if (!isMusicPlaying) {
+            const music = document.getElementById('bgMusic');
+            music.play().then(() => {
+                isMusicPlaying = true;
+            }).catch(e => console.log("等待交互播放"));
+        }
+
+        // 2. 淡出啟動頁面
+        const splash = document.getElementById('splash-screen');
+        splash.style.opacity = '0'; // 設置不透明度為 0
+        splash.style.visibility = 'hidden'; // 動畫結束後隱藏，防止阻擋卡片
+
+        // 3. 在卡片中央觸發一個漣漪效果，作為啟動反饋
+        setTimeout(() => {
+            const card = document.getElementById('card');
+            const rect = card.getBoundingClientRect();
+            // 模擬一個點擊在卡片正中央
+            const fakeEvent = {
+                clientX: rect.left + rect.width / 2,
+                clientY: rect.top + rect.height / 2
+            };
+            createRipple(fakeEvent);
+        }, 300); // 延遲一點點，讓淡出動畫先開始
+    }
+
+    // === 核心函數：處理卡片點擊 (切換金句) ===
+    function handleCardClick(event) {
+        // 音樂已經開始播放，這裡只需處理漣漪和文字切換
+        createRipple(event);
+        displayRandom();
+    }
+
+    // 建立漣漪效果
+    function createRipple(event) {
+        const card = document.getElementById('card');
+        const ripple = document.createElement('span');
+        const rect = card.getBoundingClientRect();
+        
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.classList.add('ripple');
+        
+        card.appendChild(ripple);
+        
+        // 動畫結束後移除節點
+        setTimeout(() => {
+            ripple.remove();
+        }, 700);
+    }
+
+    // 啟動資料載入
+    init();
+</script>
+
+</body>
+</html>
